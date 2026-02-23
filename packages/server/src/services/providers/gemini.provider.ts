@@ -47,30 +47,27 @@ export class GeminiProvider extends BaseProvider {
     // Extract system instruction from the system message
     const systemMessage = prepared.find((m) => m.role === 'system');
 
-    const response = await fetch(
-      `${GEMINI_API_BASE}/models/${effectiveModel}:generateContent`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          system_instruction: systemMessage
-            ? { parts: [{ text: systemMessage.content }] }
-            : undefined,
-          contents,
-          generationConfig: { temperature: 0.2, maxOutputTokens: 1024 },
-        }),
+    const response = await fetch(`${GEMINI_API_BASE}/models/${effectiveModel}:generateContent`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
-    );
+      body: JSON.stringify({
+        system_instruction: systemMessage
+          ? { parts: [{ text: systemMessage.content }] }
+          : undefined,
+        contents,
+        generationConfig: { temperature: 0.2, maxOutputTokens: 1024 },
+      }),
+    });
 
     if (!response.ok) {
       const errText = await response.text();
       throw new Error(`Gemini API error (${response.status}): ${errText}`);
     }
 
-    const data = await response.json() as {
+    const data = (await response.json()) as {
       candidates: Array<{ content: { parts: Array<{ text: string }> } }>;
     };
 

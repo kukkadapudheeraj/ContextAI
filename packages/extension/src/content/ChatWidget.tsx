@@ -38,10 +38,10 @@ export function ChatWidget() {
       }));
 
       try {
-        const response = await chrome.runtime.sendMessage({
+        const response = (await chrome.runtime.sendMessage({
           type: 'SEND_CHAT',
           payload: { messages: updatedMessages, provider },
-        }) as { answer?: string; error?: string };
+        })) as { answer?: string; error?: string };
 
         const assistantMessage: ChatMessage = {
           role: 'assistant',
@@ -102,11 +102,7 @@ export function ChatWidget() {
           );
         } else {
           // For images/videos, auto-send the initial analysis request
-          triggerQuery(
-            [systemMessage],
-            buildInitialUserMessage(contextType, content),
-            provider
-          );
+          triggerQuery([systemMessage], buildInitialUserMessage(contextType, content), provider);
         }
       }
     }

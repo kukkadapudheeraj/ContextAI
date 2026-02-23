@@ -17,7 +17,7 @@ export async function chatGemini(
   messages: ChatMessage[],
   token: string,
   model = DEFAULT_MODEL,
-  signal?: AbortSignal,
+  signal?: AbortSignal
 ): Promise<string> {
   const systemMsg = messages.find((m) => m.role === 'system');
 
@@ -48,7 +48,7 @@ export async function chatGemini(
     throw new Error(`Gemini error (${response.status}): ${text}`);
   }
 
-  const data = await response.json() as {
+  const data = (await response.json()) as {
     candidates: Array<{ content: { parts: Array<{ text: string }> } }>;
   };
   return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? '(No response)';

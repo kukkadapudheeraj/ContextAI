@@ -16,7 +16,7 @@ export async function chatOpenAI(
   messages: ChatMessage[],
   token: string,
   model = DEFAULT_MODEL,
-  signal?: AbortSignal,
+  signal?: AbortSignal
 ): Promise<string> {
   const systemMsg = messages.find((m) => m.role === 'system');
 
@@ -47,6 +47,6 @@ export async function chatOpenAI(
     throw new Error(`OpenAI error (${response.status}): ${text}`);
   }
 
-  const data = await response.json() as { choices: Array<{ message: { content: string } }> };
+  const data = (await response.json()) as { choices: Array<{ message: { content: string } }> };
   return data.choices?.[0]?.message?.content?.trim() ?? '(No response)';
 }

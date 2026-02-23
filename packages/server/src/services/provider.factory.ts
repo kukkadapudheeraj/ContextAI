@@ -14,7 +14,9 @@ export class ProviderFactory {
   static getProvider(name: string): BaseProvider {
     const provider = REGISTRY[name as Provider];
     if (!provider) {
-      throw new Error(`Unknown provider: "${name}". Valid providers: ${Object.keys(REGISTRY).join(', ')}`);
+      throw new Error(
+        `Unknown provider: "${name}". Valid providers: ${Object.keys(REGISTRY).join(', ')}`
+      );
     }
     return provider;
   }

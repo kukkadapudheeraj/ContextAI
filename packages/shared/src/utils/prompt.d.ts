@@ -7,4 +7,8 @@ export declare function buildSystemPrompt(contextType: ContextType, customPrompt
 /**
  * Builds the initial user message content based on context type and action.
  */
-export declare function buildInitialUserMessage(contextType: ContextType, content: string, action?: Action): string;
+export declare function buildInitialUserMessage(
+  contextType: ContextType,
+  content: string,
+  action?: Action
+): string;

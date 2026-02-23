@@ -75,15 +75,17 @@ export function ChatPanel({
           <span className="provider-badge">{PROVIDER_LABELS[provider]}</span>
         </div>
         <div className="panel-header-actions">
-          <button className="icon-btn" onClick={onMinimize} title="Minimize">−</button>
-          <button className="icon-btn" onClick={onClose} title="Close">×</button>
+          <button className="icon-btn" onClick={onMinimize} title="Minimize">
+            −
+          </button>
+          <button className="icon-btn" onClick={onClose} title="Close">
+            ×
+          </button>
         </div>
       </div>
 
       {/* Context Preview */}
-      {contextContent && (
-        <ContextPreview contextType={contextType} content={contextContent} />
-      )}
+      {contextContent && <ContextPreview contextType={contextType} content={contextContent} />}
 
       {/* Action Pills (text mode only) */}
       {contextType === 'text' && visibleMessages.length === 0 && (

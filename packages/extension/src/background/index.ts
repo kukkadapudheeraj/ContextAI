@@ -72,9 +72,11 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 // ── Message Handler (from content script / popup) ────────────────────────────
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-  handleMessage(message).then(sendResponse).catch((err) => {
-    sendResponse({ error: String(err) });
-  });
+  handleMessage(message)
+    .then(sendResponse)
+    .catch((err) => {
+      sendResponse({ error: String(err) });
+    });
   return true; // Keep channel open for async response
 });
 
@@ -87,10 +89,17 @@ async function handleMessage(message: { type: string; payload?: unknown }): Prom
       return handleDisconnect((message.payload as { provider: string }).provider);
 
     case 'SEND_CHAT':
-      return handleChat(message.payload as {
-        messages: Array<{ role: string; content: string; mediaUrl?: string; contextType?: string }>;
-        provider: string;
-      });
+      return handleChat(
+        message.payload as {
+          messages: Array<{
+            role: string;
+            content: string;
+            mediaUrl?: string;
+            contextType?: string;
+          }>;
+          provider: string;
+        }
+      );
 
     case 'GET_STORAGE':
       return loadStorage();
