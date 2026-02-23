@@ -1,0 +1,27 @@
+{
+  "name": "contextai",
+  "private": true,
+  "version": "1.0.0",
+  "description": "ContextAI monorepo — browser extension + backend server",
+  "scripts": {
+    "dev": "pnpm -r dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "eslint packages --ext .ts,.tsx --max-warnings 0",
+    "format": "prettier --write \"packages/**/*.{ts,tsx,css,json}\"",
+    "format:check": "prettier --check \"packages/**/*.{ts,tsx,css,json}\""
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "prettier": "^3.2.5",
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  }
+}
