@@ -24,6 +24,50 @@ const INITIAL_STATE: WidgetState = {
 export function ChatWidget() {
   const [state, setState] = useState<WidgetState>(INITIAL_STATE);
 
+  /** Send messages to background → AI provider and get response */
+  const triggerQuery = useCallback(
+    async (currentMessages: ChatMessage[], userText: string, provider: Provider) => {
+      const userMessage: ChatMessage = { role: 'user', content: userText };
+      const updatedMessages = [...currentMessages, userMessage];
+
+      setState((s) => ({
+        ...s,
+        isOpen: true,
+        messages: updatedMessages,
+        isLoading: true,
+      }));
+
+      try {
+        const response = await chrome.runtime.sendMessage({
+          type: 'SEND_CHAT',
+          payload: { messages: updatedMessages, provider },
+        }) as { answer?: string; error?: string };
+
+        const assistantMessage: ChatMessage = {
+          role: 'assistant',
+          content: response.error ?? response.answer ?? '(No response)',
+        };
+
+        setState((s) => ({
+          ...s,
+          messages: [...s.messages, assistantMessage],
+          isLoading: false,
+        }));
+      } catch (err) {
+        const errorMessage: ChatMessage = {
+          role: 'assistant',
+          content: `Error: ${String(err)}`,
+        };
+        setState((s) => ({
+          ...s,
+          messages: [...s.messages, errorMessage],
+          isLoading: false,
+        }));
+      }
+    },
+    []
+  );
+
   // Listen for OPEN_CHAT messages from the background service worker
   useEffect(() => {
     function onMessage(message: { type: string; payload?: unknown }) {
@@ -69,7 +113,7 @@ export function ChatWidget() {
 
     chrome.runtime.onMessage.addListener(onMessage);
     return () => chrome.runtime.onMessage.removeListener(onMessage);
-  }, []);
+  }, [triggerQuery]);
 
   // Close on ESC key
   useEffect(() => {
@@ -81,50 +125,6 @@ export function ChatWidget() {
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [state.isOpen]);
-
-  /** Send messages to background → server and get AI response */
-  const triggerQuery = useCallback(
-    async (currentMessages: ChatMessage[], userText: string, provider: Provider) => {
-      const userMessage: ChatMessage = { role: 'user', content: userText };
-      const updatedMessages = [...currentMessages, userMessage];
-
-      setState((s) => ({
-        ...s,
-        isOpen: true,
-        messages: updatedMessages,
-        isLoading: true,
-      }));
-
-      try {
-        const response = await chrome.runtime.sendMessage({
-          type: 'SEND_CHAT',
-          payload: { messages: updatedMessages, provider },
-        }) as { answer?: string; error?: string };
-
-        const assistantMessage: ChatMessage = {
-          role: 'assistant',
-          content: response.error ?? response.answer ?? '(No response)',
-        };
-
-        setState((s) => ({
-          ...s,
-          messages: [...s.messages, assistantMessage],
-          isLoading: false,
-        }));
-      } catch (err) {
-        const errorMessage: ChatMessage = {
-          role: 'assistant',
-          content: `Error: ${String(err)}`,
-        };
-        setState((s) => ({
-          ...s,
-          messages: [...s.messages, errorMessage],
-          isLoading: false,
-        }));
-      }
-    },
-    []
-  );
 
   function handleSendMessage(text: string) {
     triggerQuery(state.messages, text, state.provider);

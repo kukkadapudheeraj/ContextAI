@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import type { Action, ChatMessage, ContextType, Provider } from '@contextai/shared';
 import { ContextPreview } from './ContextPreview';
-import { MessageBubble, LoadingBubble, ErrorBubble } from './MessageBubble';
+import { MessageBubble, LoadingBubble } from './MessageBubble';
 
 const ACTIONS: Array<{ key: Action; label: string }> = [
   { key: 'explain', label: 'Explain' },
