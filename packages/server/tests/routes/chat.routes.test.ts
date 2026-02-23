@@ -70,10 +70,14 @@ describe('POST /api/chat', () => {
     expect(res.body.error).toContain('invalid-provider');
   });
 
-  // Happy path: mock the provider to return a response and verify the answer is forwarded
-  it('returns 200 with answer when provider succeeds', async () => {
+  // Happy path: mock the provider to return a ChatResult and verify both fields are forwarded
+  it('returns 200 with answer and modelUsed when provider succeeds', async () => {
     // Stub out the real AI call so the test stays fast and offline
-    const mockProvider = { chat: vi.fn().mockResolvedValue('Hello from AI!'), name: 'gemini' };
+    // Provider now returns ChatResult { answer, modelUsed } instead of a plain string
+    const mockProvider = {
+      chat: vi.fn().mockResolvedValue({ answer: 'Hello from AI!', modelUsed: 'gpt-4o-mini' }),
+      name: 'gemini',
+    };
     vi.spyOn(ProviderFactory, 'getProvider').mockReturnValue(mockProvider as never);
     vi.spyOn(ProviderFactory, 'isValidProvider').mockReturnValue(true);
 
@@ -86,6 +90,7 @@ describe('POST /api/chat', () => {
 
     expect(res.status).toBe(200);
     expect(res.body.answer).toBe('Hello from AI!');
+    expect(res.body.modelUsed).toBe('gpt-4o-mini');
     expect(mockProvider.chat).toHaveBeenCalledOnce();
   });
 

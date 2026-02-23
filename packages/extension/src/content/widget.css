@@ -269,12 +269,30 @@
   border-bottom-left-radius: 4px;
 }
 
-.message-meta {
-  font-size: 10px;
-  color: #aaa;
+.message-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin-top: 3px;
   padding: 0 4px;
 }
+
+.message-meta {
+  font-size: 10px;
+  color: #aaa;
+}
+
+.copy-btn {
+  font-size: 10px;
+  color: #aaa;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+}
+
+.copy-btn:hover { color: #667eea; }
 
 /* ── Loading Indicator ──────────────────────────────────────────────────────── */
 .loading-dots {

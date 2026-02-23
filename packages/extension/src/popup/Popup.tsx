@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import type { Provider, StorageSchema } from '@contextai/shared';
 
+const ONBOARDING_STEPS = [
+  { icon: '🔌', text: 'Connect at least one AI provider below' },
+  { icon: '🌐', text: 'Visit any webpage and right-click text, image, or video' },
+  { icon: '💬', text: 'Select "Ask ContextAI" to start chatting' },
+];
+
 const PROVIDERS: Array<{ key: Provider; label: string; icon: string }> = [
   { key: 'gemini', label: 'Gemini', icon: '✦' },
   { key: 'openai', label: 'ChatGPT', icon: '⬡' },
@@ -11,6 +17,7 @@ export function Popup() {
   const [storage, setStorage] = useState<StorageSchema | null>(null);
   const [connecting, setConnecting] = useState<Provider | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [onboardingDismissed, setOnboardingDismissed] = useState(false);
 
   useEffect(() => {
     loadStorage();
@@ -63,11 +70,38 @@ export function Popup() {
     );
   }
 
+  const isFirstRun = !PROVIDERS.some((p) => storage[p.key].connected);
+  const showOnboarding = isFirstRun && !onboardingDismissed;
+
   return (
     <div className="popup">
       <header className="popup-header">
         <div className="popup-logo">🤖 ContextAI</div>
       </header>
+
+      {/* First-run onboarding banner */}
+      {showOnboarding && (
+        <div className="onboarding-banner">
+          <div className="onboarding-header">
+            <span className="onboarding-title">Welcome! Get started in 3 steps</span>
+            <button
+              className="onboarding-dismiss"
+              onClick={() => setOnboardingDismissed(true)}
+              title="Dismiss"
+            >
+              ×
+            </button>
+          </div>
+          <ol className="onboarding-steps">
+            {ONBOARDING_STEPS.map((step, i) => (
+              <li key={i} className="onboarding-step">
+                <span className="onboarding-step-icon">{step.icon}</span>
+                <span>{step.text}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
 
       {/* Active Provider Selector */}
       <section className="section">
@@ -117,7 +151,8 @@ export function Popup() {
       {error && <div className="error-msg">{error}</div>}
 
       <footer className="popup-footer">
-        <button className="settings-link" onClick={openOptions}>⚙ Full Settings</button>
+        <span className="disclaimer-note">Use at your own risk</span>
+        <button className="settings-link" onClick={openOptions}>⚙ Settings &amp; Terms</button>
       </footer>
     </div>
   );

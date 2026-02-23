@@ -1,9 +1,10 @@
 import type { ChatMessage } from '@contextai/shared';
-import { BaseProvider } from './base.provider';
+import { BaseProvider, type ChatResult } from './base.provider';
 
 const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
-const TEXT_MODEL = 'claude-3-5-haiku-20251001';
-const VISION_MODEL = 'claude-sonnet-4-6'; // Supports vision
+
+/** Default model for all users — no subscription required */
+const DEFAULT_MODEL = 'claude-3-5-haiku-20251001';
 
 type ClaudeContentBlock =
   | { type: 'text'; text: string }
@@ -17,10 +18,9 @@ interface ClaudeMessage {
 export class ClaudeProvider extends BaseProvider {
   readonly name = 'claude';
 
-  async chat(messages: ChatMessage[], token: string): Promise<string> {
+  async chat(messages: ChatMessage[], token: string, model?: string): Promise<ChatResult> {
     const prepared = this.ensureSystemPrompt(messages);
-    const hasMedia = this.hasMediaContent(prepared);
-    const model = hasMedia ? VISION_MODEL : TEXT_MODEL;
+    const effectiveModel = model ?? DEFAULT_MODEL;
 
     const systemMessage = prepared.find((m) => m.role === 'system');
 
@@ -40,13 +40,6 @@ export class ClaudeProvider extends BaseProvider {
         return { role: m.role as 'user' | 'assistant', content: m.content };
       });
 
-    const requestBody = {
-      model,
-      system: systemMessage?.content,
-      messages: claudeMessages,
-      max_tokens: 1024,
-    };
-
     const response = await fetch(CLAUDE_API_URL, {
       method: 'POST',
       headers: {
@@ -54,7 +47,12 @@ export class ClaudeProvider extends BaseProvider {
         'x-api-key': token,
         'anthropic-version': '2023-06-01',
       },
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify({
+        model: effectiveModel,
+        system: systemMessage?.content,
+        messages: claudeMessages,
+        max_tokens: 1024,
+      }),
     });
 
     if (!response.ok) {
@@ -66,6 +64,9 @@ export class ClaudeProvider extends BaseProvider {
       content: Array<{ type: string; text: string }>;
     };
 
-    return data.content?.find((b) => b.type === 'text')?.text?.trim() ?? '(No response)';
+    return {
+      answer: data.content?.find((b) => b.type === 'text')?.text?.trim() ?? '(No response)',
+      modelUsed: effectiveModel,
+    };
   }
 }

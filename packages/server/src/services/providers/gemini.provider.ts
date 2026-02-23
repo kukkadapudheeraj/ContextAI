@@ -1,9 +1,10 @@
 import type { ChatMessage } from '@contextai/shared';
-import { BaseProvider } from './base.provider';
+import { BaseProvider, type ChatResult } from './base.provider';
 
 const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
-const TEXT_MODEL = 'gemini-1.5-flash';
-const VISION_MODEL = 'gemini-1.5-flash';
+
+/** Default model for all users — no subscription required */
+const DEFAULT_MODEL = 'gemini-1.5-flash';
 
 interface GeminiPart {
   text?: string;
@@ -19,10 +20,9 @@ interface GeminiContent {
 export class GeminiProvider extends BaseProvider {
   readonly name = 'gemini';
 
-  async chat(messages: ChatMessage[], token: string): Promise<string> {
+  async chat(messages: ChatMessage[], token: string, model?: string): Promise<ChatResult> {
     const prepared = this.ensureSystemPrompt(messages);
-    const hasMedia = this.hasMediaContent(prepared);
-    const model = hasMedia ? VISION_MODEL : TEXT_MODEL;
+    const effectiveModel = model ?? DEFAULT_MODEL;
 
     // Convert ChatMessage[] → Gemini contents[]
     const contents: GeminiContent[] = prepared
@@ -31,7 +31,6 @@ export class GeminiProvider extends BaseProvider {
         const parts: GeminiPart[] = [];
 
         if (m.mediaUrl && m.contextType === 'image') {
-          // Pass image as a URL reference
           parts.push({ fileData: { mimeType: 'image/jpeg', fileUri: m.mediaUrl } });
         }
 
@@ -48,27 +47,22 @@ export class GeminiProvider extends BaseProvider {
     // Extract system instruction from the system message
     const systemMessage = prepared.find((m) => m.role === 'system');
 
-    const requestBody = {
-      system_instruction: systemMessage
-        ? { parts: [{ text: systemMessage.content }] }
-        : undefined,
-      contents,
-      generationConfig: {
-        temperature: 0.2,
-        maxOutputTokens: 1024,
-      },
-    };
-
     const response = await fetch(
-      `${GEMINI_API_BASE}/models/${model}:generateContent`,
+      `${GEMINI_API_BASE}/models/${effectiveModel}:generateContent`,
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(requestBody),
-      }
+        body: JSON.stringify({
+          system_instruction: systemMessage
+            ? { parts: [{ text: systemMessage.content }] }
+            : undefined,
+          contents,
+          generationConfig: { temperature: 0.2, maxOutputTokens: 1024 },
+        }),
+      },
     );
 
     if (!response.ok) {
@@ -80,6 +74,9 @@ export class GeminiProvider extends BaseProvider {
       candidates: Array<{ content: { parts: Array<{ text: string }> } }>;
     };
 
-    return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? '(No response)';
+    return {
+      answer: data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? '(No response)',
+      modelUsed: effectiveModel,
+    };
   }
 }

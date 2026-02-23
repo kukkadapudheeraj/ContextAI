@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { ChatMessage, Provider } from '@contextai/shared';
 
 const PROVIDER_LABELS: Record<Provider, string> = {
@@ -13,13 +13,27 @@ interface MessageBubbleProps {
 }
 
 export function MessageBubble({ message, provider }: MessageBubbleProps) {
+  const [copied, setCopied] = useState(false);
+
   if (message.role === 'system') return null;
+
+  function handleCopy() {
+    navigator.clipboard.writeText(message.content).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    });
+  }
 
   return (
     <div className={`message ${message.role}`}>
       <div className="bubble">{message.content}</div>
-      {message.role === 'assistant' && provider && (
-        <div className="message-meta">{PROVIDER_LABELS[provider]}</div>
+      {message.role === 'assistant' && (
+        <div className="message-footer">
+          {provider && <span className="message-meta">{PROVIDER_LABELS[provider]}</span>}
+          <button className="copy-btn" onClick={handleCopy} title="Copy response">
+            {copied ? '✓ Copied' : 'Copy'}
+          </button>
+        </div>
       )}
     </div>
   );

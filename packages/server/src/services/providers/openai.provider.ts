@@ -1,9 +1,10 @@
 import type { ChatMessage } from '@contextai/shared';
-import { BaseProvider } from './base.provider';
+import { BaseProvider, type ChatResult } from './base.provider';
 
 const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
-const TEXT_MODEL = 'gpt-4o-mini';
-const VISION_MODEL = 'gpt-4o'; // gpt-4o supports vision
+
+/** Default model for all users — no subscription required */
+const DEFAULT_MODEL = 'gpt-4o-mini';
 
 type OpenAIContentPart =
   | { type: 'text'; text: string }
@@ -17,10 +18,9 @@ interface OpenAIMessage {
 export class OpenAIProvider extends BaseProvider {
   readonly name = 'openai';
 
-  async chat(messages: ChatMessage[], token: string): Promise<string> {
+  async chat(messages: ChatMessage[], token: string, model?: string): Promise<ChatResult> {
     const prepared = this.ensureSystemPrompt(messages);
-    const hasMedia = this.hasMediaContent(prepared);
-    const model = hasMedia ? VISION_MODEL : TEXT_MODEL;
+    const effectiveModel = model ?? DEFAULT_MODEL;
 
     // Convert ChatMessage[] → OpenAI messages[]
     const openAIMessages: OpenAIMessage[] = prepared
@@ -44,20 +44,18 @@ export class OpenAIProvider extends BaseProvider {
       openAIMessages.unshift({ role: 'system', content: systemMessage.content });
     }
 
-    const requestBody = {
-      model,
-      messages: openAIMessages,
-      temperature: 0.2,
-      max_tokens: 1024,
-    };
-
     const response = await fetch(OPENAI_API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify({
+        model: effectiveModel,
+        messages: openAIMessages,
+        temperature: 0.2,
+        max_tokens: 1024,
+      }),
     });
 
     if (!response.ok) {
@@ -69,6 +67,9 @@ export class OpenAIProvider extends BaseProvider {
       choices: Array<{ message: { content: string } }>;
     };
 
-    return data.choices?.[0]?.message?.content?.trim() ?? '(No response)';
+    return {
+      answer: data.choices?.[0]?.message?.content?.trim() ?? '(No response)',
+      modelUsed: effectiveModel,
+    };
   }
 }

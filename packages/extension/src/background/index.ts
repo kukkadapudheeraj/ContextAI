@@ -1,11 +1,12 @@
-import type { ContextType, StorageSchema } from '@contextai/shared';
+import type { ChatMessage, ContextType, StorageSchema } from '@contextai/shared';
 import type { OpenChatMessage } from '@contextai/shared';
 import { loadStorage, getProviderToken } from '../storage/storage';
 import { connectGemini, disconnectGemini } from '../providers/gemini';
 import { connectOpenAI, disconnectOpenAI } from '../providers/openai';
 import { connectClaude, disconnectClaude } from '../providers/claude';
-
-const SERVER_URL = 'http://localhost:3001';
+import { chatOpenAI } from '../ai/openai';
+import { chatGemini } from '../ai/gemini';
+import { chatClaude } from '../ai/claude';
 
 // ── Context Menu Setup ────────────────────────────────────────────────────────
 
@@ -133,13 +134,17 @@ async function handleDisconnect(provider: string): Promise<{ success: boolean }>
   return { success: true };
 }
 
-// ── AI Chat Request ────────────────────────────────────────────────────────────
+// ── AI Chat Request (calls AI APIs directly — no backend server needed) ────────
 
 async function handleChat(payload: {
   messages: Array<{ role: string; content: string; mediaUrl?: string; contextType?: string }>;
   provider: string;
 }): Promise<{ answer?: string; error?: string }> {
-  const token = await getProviderToken(payload.provider as StorageSchema['activeProvider']);
+  const providerKey = payload.provider as StorageSchema['activeProvider'];
+  const storage = await loadStorage();
+
+  // Decrypt the session token from AES-GCM encrypted local storage
+  const token = await getProviderToken(providerKey);
 
   if (!token) {
     return {
@@ -147,21 +152,48 @@ async function handleChat(payload: {
     };
   }
 
-  const response = await fetch(`${SERVER_URL}/api/chat`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      provider: payload.provider,
-      messages: payload.messages,
-      token,
-    }),
-  });
+  // Pass the user-selected model — undefined falls back to provider's free-tier default
+  const model = storage[providerKey]?.model;
 
-  if (!response.ok) {
-    const text = await response.text();
-    return { error: `Server error (${response.status}): ${text}` };
+  // Apply custom system prompt if set in Options
+  let messages = payload.messages as ChatMessage[];
+  const customPrompt = storage.customSystemPrompt;
+  if (customPrompt?.trim()) {
+    if (messages[0]?.role === 'system') {
+      messages = [{ role: 'system', content: customPrompt }, ...messages.slice(1)];
+    } else {
+      messages = [{ role: 'system', content: customPrompt }, ...messages];
+    }
   }
 
-  const data = await response.json() as { answer: string };
-  return { answer: data.answer };
+  // 30-second timeout via AbortController
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30_000);
+
+  try {
+    let answer: string;
+
+    switch (providerKey) {
+      case 'openai':
+        answer = await chatOpenAI(messages, token, model, controller.signal);
+        break;
+      case 'gemini':
+        answer = await chatGemini(messages, token, model, controller.signal);
+        break;
+      case 'claude':
+        answer = await chatClaude(messages, token, model, controller.signal);
+        break;
+      default:
+        throw new Error(`Unknown provider: ${providerKey}`);
+    }
+
+    clearTimeout(timeoutId);
+    return { answer };
+  } catch (err) {
+    clearTimeout(timeoutId);
+    if (err instanceof DOMException && err.name === 'AbortError') {
+      return { error: 'Request timed out after 30 seconds. Check your connection and try again.' };
+    }
+    return { error: String(err) };
+  }
 }

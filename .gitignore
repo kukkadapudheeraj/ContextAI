@@ -1,9 +1,39 @@
+# Dependencies
 node_modules/
+
+# Build output
 dist/
 *.zip
+
+# Environment & secrets — never commit these
 .env
 .env.local
+.env.development
+.env.production
+.env.staging
+.env.test
+.env.*
+
+# Private keys and credentials
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+service-account.json
+
+# OS files
 .DS_Store
+Thumbs.db
+
+# Logs
 *.log
 .pnpm-debug.log
+npm-debug.log*
+
+# Test coverage
 coverage/
+
+# IDE
+.vscode/settings.json
+.idea/

@@ -147,7 +147,14 @@ body {
 .popup-footer {
   padding: 10px 16px 12px;
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.disclaimer-note {
+  font-size: 10px;
+  color: #bbb;
+  font-style: italic;
 }
 
 .settings-link {
@@ -168,5 +175,62 @@ body {
   padding: 20px;
   text-align: center;
   color: #aaa;
+  font-size: 13px;
+}
+
+/* First-run onboarding */
+.onboarding-banner {
+  margin: 10px 12px 0;
+  padding: 10px 12px;
+  background: rgba(102, 126, 234, 0.07);
+  border: 1.5px solid rgba(102, 126, 234, 0.2);
+  border-radius: 10px;
+}
+
+.onboarding-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.onboarding-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #667eea;
+  letter-spacing: 0.2px;
+}
+
+.onboarding-dismiss {
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+  transition: color 0.15s;
+}
+
+.onboarding-dismiss:hover { color: #555; }
+
+.onboarding-steps {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.onboarding-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: 12px;
+  color: #444;
+  line-height: 1.4;
+}
+
+.onboarding-step-icon {
+  flex-shrink: 0;
   font-size: 13px;
 }

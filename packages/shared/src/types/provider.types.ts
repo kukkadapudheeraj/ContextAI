@@ -26,6 +26,8 @@ export interface ProviderConnection {
   token?: string;
   /** Unix timestamp (ms) when the token expires — Gemini OAuth only */
   expiresAt?: number;
+  /** User-selected model override — falls back to provider default when undefined */
+  model?: string;
 }
 
 export interface StorageSchema {

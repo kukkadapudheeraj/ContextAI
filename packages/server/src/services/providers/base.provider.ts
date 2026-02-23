@@ -1,15 +1,31 @@
 import type { ChatMessage, ContextType } from '@contextai/shared';
 import { buildSystemPrompt } from '@contextai/shared';
 
+/** Returned by every provider's chat() method. */
+export interface ChatResult {
+  /** The assistant's reply text. */
+  answer: string;
+  /**
+   * The model that actually produced the response.
+   * When no model is specified, the provider probes the best (paid) model first
+   * and falls back to the free-tier model on access errors.  The extension
+   * caches this value so subsequent requests skip the probe step.
+   */
+  modelUsed: string;
+}
+
 export abstract class BaseProvider {
   abstract readonly name: string;
 
   /**
-   * Send a multi-turn conversation to the AI and return the assistant's response.
+   * Send a multi-turn conversation to the AI and return the answer plus which
+   * model was used (for subscription-aware auto-detection and caching).
+   *
    * @param messages Full conversation history (includes system prompt)
    * @param token    Auth token (OAuth access token or API key)
+   * @param model    Optional model override — provider auto-detects when omitted
    */
-  abstract chat(messages: ChatMessage[], token: string): Promise<string>;
+  abstract chat(messages: ChatMessage[], token: string, model?: string): Promise<ChatResult>;
 
   /** Check if the first user message contains a media URL (image/video) */
   protected hasMediaContent(messages: ChatMessage[]): boolean {

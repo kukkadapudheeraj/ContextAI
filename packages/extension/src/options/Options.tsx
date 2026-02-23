@@ -1,6 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import type { Provider, StorageSchema } from '@contextai/shared';
 
+// Free-tier models are listed first (used by default).
+// Users with paid subscriptions can select higher-tier models below.
+const PROVIDER_MODELS: Record<Provider, Array<{ value: string; label: string }>> = {
+  gemini: [
+    { value: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash (default — free)' },
+    { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash (free — newest)' },
+    { value: 'gemini-1.5-pro',   label: 'Gemini 1.5 Pro (paid)' },
+  ],
+  openai: [
+    { value: 'gpt-4o-mini', label: 'GPT-4o Mini (default — free)' },
+    { value: 'gpt-4o',      label: 'GPT-4o (Plus / Team / Enterprise)' },
+    { value: 'o1-mini',     label: 'o1 Mini (Plus — reasoning)' },
+  ],
+  claude: [
+    { value: 'claude-3-5-haiku-20251001',  label: 'Claude 3.5 Haiku (default — free)' },
+    { value: 'claude-3-5-sonnet-20241022', label: 'Claude 3.5 Sonnet (Pro)' },
+    { value: 'claude-sonnet-4-6',          label: 'Claude Sonnet 4.6 (latest)' },
+    { value: 'claude-opus-4-6',            label: 'Claude Opus 4.6 (most powerful)' },
+  ],
+};
+
 const PROVIDERS: Array<{ key: Provider; label: string; icon: string; description: string }> = [
   {
     key: 'gemini',
@@ -69,6 +90,12 @@ export function Options() {
     setStorage((s) => s ? { ...s, activeProvider: provider } : s);
   }
 
+  async function handleSetModel(provider: Provider, model: string) {
+    const current = storage![provider];
+    await chrome.storage.sync.set({ [provider]: { ...current, model } });
+    setStorage((s) => s ? { ...s, [provider]: { ...s[provider], model } } : s);
+  }
+
   async function handleSavePrompt() {
     await chrome.storage.sync.set({ customSystemPrompt: customPrompt || undefined });
     setSaved(true);
@@ -128,6 +155,21 @@ export function Options() {
                       Connected{isDefault ? ' · Active' : ''}
                     </div>
                   )}
+                  {conn.connected && (
+                    <div className="model-selector">
+                      <label className="model-label" htmlFor={`model-${key}`}>Model</label>
+                      <select
+                        id={`model-${key}`}
+                        className="model-select"
+                        value={conn.model ?? PROVIDER_MODELS[key][0].value}
+                        onChange={(e) => handleSetModel(key, e.target.value)}
+                      >
+                        {PROVIDER_MODELS[key].map(({ value, label }) => (
+                          <option key={value} value={value}>{label}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -161,14 +203,55 @@ export function Options() {
 
         {error && <div className="options-error">{error}</div>}
 
-        {/* Privacy Notice */}
+        {/* Privacy & Security */}
         <section className="options-section privacy">
-          <h2>Privacy</h2>
+          <h2>Privacy &amp; Security</h2>
           <p>
-            🔒 All credentials and settings are stored locally in your browser via{' '}
-            <code>chrome.storage.sync</code>. Nothing is sent to ContextAI servers.
-            AI requests go directly from your browser to the AI provider's servers.
+            🔒 Your session tokens are encrypted with <code>AES-256-GCM</code> before being stored
+            and never leave your device — kept in <code>chrome.storage.local</code> only, never
+            synced to Google. Non-sensitive settings (active provider, selected model) use{' '}
+            <code>chrome.storage.sync</code> for convenience. Nothing is ever sent to ContextAI
+            servers. AI requests go directly from your browser to the AI provider&apos;s servers.
           </p>
+        </section>
+
+        {/* Disclaimer */}
+        <section className="options-section disclaimer">
+          <h2>Terms &amp; Disclaimer</h2>
+          <div className="disclaimer-body">
+            <p>
+              ContextAI is an independent browser extension and is <strong>not affiliated with,
+              endorsed by, or sponsored by</strong> Google, OpenAI, or Anthropic. By using this
+              extension you agree to the following:
+            </p>
+            <ul className="disclaimer-list">
+              <li>
+                <strong>Use at your own risk.</strong> This extension is provided &ldquo;as is&rdquo;,
+                without warranty of any kind. The developer is not liable for any damages, data
+                loss, or consequences arising from your use of this extension or any AI-generated
+                content.
+              </li>
+              <li>
+                <strong>AI responses may be inaccurate.</strong> AI models can produce incorrect,
+                incomplete, or outdated information. Always verify important results with authoritative
+                sources before acting on them.
+              </li>
+              <li>
+                <strong>Third-party services apply.</strong> Your queries are processed by the AI
+                provider you connect (Google Gemini, OpenAI, or Anthropic Claude). Their respective{' '}
+                <em>Terms of Service</em> and <em>Privacy Policies</em> govern how your data is
+                handled on their end.
+              </li>
+              <li>
+                <strong>Responsible use.</strong> You are solely responsible for the content you
+                submit and for complying with applicable laws and the terms of each AI provider.
+              </li>
+            </ul>
+            <p className="disclaimer-trust">
+              We built ContextAI to be transparent and privacy-first. If you ever have questions
+              or concerns, please reach out — your trust matters to us.
+            </p>
+          </div>
         </section>
       </main>
     </div>
