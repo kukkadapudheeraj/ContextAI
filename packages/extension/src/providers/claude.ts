@@ -40,10 +40,13 @@ async function openLoginAndWait(): Promise<string> {
   const tabId = tab.id!;
 
   return new Promise((resolve, reject) => {
-    const timeout = setTimeout(() => {
-      cleanup();
-      reject(new Error('Claude login timed out after 5 minutes.'));
-    }, 5 * 60 * 1000);
+    const timeout = setTimeout(
+      () => {
+        cleanup();
+        reject(new Error('Claude login timed out after 5 minutes.'));
+      },
+      5 * 60 * 1000
+    );
 
     const interval = setInterval(async () => {
       const token = await getSessionToken();

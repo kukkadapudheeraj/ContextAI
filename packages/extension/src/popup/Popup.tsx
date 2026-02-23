@@ -24,7 +24,7 @@ export function Popup() {
   }, []);
 
   async function loadStorage() {
-    const result = await chrome.runtime.sendMessage({ type: 'GET_STORAGE' }) as StorageSchema;
+    const result = (await chrome.runtime.sendMessage({ type: 'GET_STORAGE' })) as StorageSchema;
     setStorage(result);
   }
 
@@ -55,7 +55,7 @@ export function Popup() {
 
   async function handleSetActive(provider: Provider) {
     await chrome.storage.sync.set({ activeProvider: provider });
-    setStorage((s) => s ? { ...s, activeProvider: provider } : s);
+    setStorage((s) => (s ? { ...s, activeProvider: provider } : s));
   }
 
   function openOptions() {
@@ -137,7 +137,7 @@ export function Popup() {
                 </div>
                 <button
                   className={`action-btn ${conn.connected ? 'disconnect' : 'connect'}`}
-                  onClick={() => conn.connected ? handleDisconnect(key) : handleConnect(key)}
+                  onClick={() => (conn.connected ? handleDisconnect(key) : handleConnect(key))}
                   disabled={isConnecting}
                 >
                   {isConnecting ? '...' : conn.connected ? 'Disconnect' : 'Connect →'}
@@ -152,7 +152,9 @@ export function Popup() {
 
       <footer className="popup-footer">
         <span className="disclaimer-note">Use at your own risk</span>
-        <button className="settings-link" onClick={openOptions}>⚙ Settings &amp; Terms</button>
+        <button className="settings-link" onClick={openOptions}>
+          ⚙ Settings &amp; Terms
+        </button>
       </footer>
     </div>
   );

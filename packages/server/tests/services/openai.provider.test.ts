@@ -46,9 +46,9 @@ describe('OpenAIProvider', () => {
       text: async () => 'Rate limited',
     });
 
-    await expect(
-      provider.chat([{ role: 'user', content: 'Hi' }], 'token')
-    ).rejects.toThrow('OpenAI API error (429)');
+    await expect(provider.chat([{ role: 'user', content: 'Hi' }], 'token')).rejects.toThrow(
+      'OpenAI API error (429)'
+    );
   });
 
   it('uses caller-supplied model override and returns it as modelUsed', async () => {

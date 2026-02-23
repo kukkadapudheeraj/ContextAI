@@ -29,7 +29,7 @@ async function getOrCreateKey(): Promise<CryptoKey> {
       stored[KEY_RECORD] as JsonWebKey,
       ALGORITHM,
       false, // non-extractable after import — key can only be used, not exported again
-      ['encrypt', 'decrypt'],
+      ['encrypt', 'decrypt']
     );
   }
 

@@ -35,7 +35,7 @@ export async function saveStorage(partial: Partial<StorageSchema>): Promise<void
  */
 export async function setProviderConnection(
   provider: Provider,
-  connection: StorageSchema[Provider],
+  connection: StorageSchema[Provider]
 ): Promise<void> {
   if (connection.token) {
     // Encrypt and persist to local storage only

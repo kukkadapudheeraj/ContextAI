@@ -11,15 +11,14 @@ interface ContextPreviewProps {
 }
 
 export function ContextPreview({ contextType, content }: ContextPreviewProps) {
-  const label = contextType === 'text' ? 'Selected Text' : contextType === 'image' ? 'Image' : 'Video';
+  const label =
+    contextType === 'text' ? 'Selected Text' : contextType === 'image' ? 'Image' : 'Video';
 
   return (
     <div className="context-preview">
       <div className="context-label">{label}</div>
 
-      {contextType === 'text' && (
-        <div className="context-text">"{truncate(content, 120)}"</div>
-      )}
+      {contextType === 'text' && <div className="context-text">"{truncate(content, 120)}"</div>}
 
       {contextType === 'image' && (
         <img

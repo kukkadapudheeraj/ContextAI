@@ -7,18 +7,18 @@ const PROVIDER_MODELS: Record<Provider, Array<{ value: string; label: string }>>
   gemini: [
     { value: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash (default — free)' },
     { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash (free — newest)' },
-    { value: 'gemini-1.5-pro',   label: 'Gemini 1.5 Pro (paid)' },
+    { value: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro (paid)' },
   ],
   openai: [
     { value: 'gpt-4o-mini', label: 'GPT-4o Mini (default — free)' },
-    { value: 'gpt-4o',      label: 'GPT-4o (Plus / Team / Enterprise)' },
-    { value: 'o1-mini',     label: 'o1 Mini (Plus — reasoning)' },
+    { value: 'gpt-4o', label: 'GPT-4o (Plus / Team / Enterprise)' },
+    { value: 'o1-mini', label: 'o1 Mini (Plus — reasoning)' },
   ],
   claude: [
-    { value: 'claude-3-5-haiku-20251001',  label: 'Claude 3.5 Haiku (default — free)' },
+    { value: 'claude-3-5-haiku-20251001', label: 'Claude 3.5 Haiku (default — free)' },
     { value: 'claude-3-5-sonnet-20241022', label: 'Claude 3.5 Sonnet (Pro)' },
-    { value: 'claude-sonnet-4-6',          label: 'Claude Sonnet 4.6 (latest)' },
-    { value: 'claude-opus-4-6',            label: 'Claude Opus 4.6 (most powerful)' },
+    { value: 'claude-sonnet-4-6', label: 'Claude Sonnet 4.6 (latest)' },
+    { value: 'claude-opus-4-6', label: 'Claude Opus 4.6 (most powerful)' },
   ],
 };
 
@@ -55,7 +55,7 @@ export function Options() {
   }, []);
 
   async function loadStorage() {
-    const result = await chrome.runtime.sendMessage({ type: 'GET_STORAGE' }) as StorageSchema;
+    const result = (await chrome.runtime.sendMessage({ type: 'GET_STORAGE' })) as StorageSchema;
     setStorage(result);
     setCustomPrompt(result.customSystemPrompt ?? '');
   }
@@ -87,13 +87,13 @@ export function Options() {
 
   async function handleSetDefault(provider: Provider) {
     await chrome.storage.sync.set({ activeProvider: provider });
-    setStorage((s) => s ? { ...s, activeProvider: provider } : s);
+    setStorage((s) => (s ? { ...s, activeProvider: provider } : s));
   }
 
   async function handleSetModel(provider: Provider, model: string) {
     const current = storage![provider];
     await chrome.storage.sync.set({ [provider]: { ...current, model } });
-    setStorage((s) => s ? { ...s, [provider]: { ...s[provider], model } } : s);
+    setStorage((s) => (s ? { ...s, [provider]: { ...s[provider], model } } : s));
   }
 
   async function handleSavePrompt() {
@@ -121,7 +121,10 @@ export function Options() {
               const isConnecting = connecting === key;
               const isDefault = storage.activeProvider === key;
               return (
-                <div key={key} className={`provider-card-full ${conn.connected ? 'connected' : ''}`}>
+                <div
+                  key={key}
+                  className={`provider-card-full ${conn.connected ? 'connected' : ''}`}
+                >
                   <div className="provider-card-header">
                     <div className="provider-card-info">
                       <span className="provider-icon-lg">{icon}</span>
@@ -142,7 +145,9 @@ export function Options() {
                       )}
                       <button
                         className={`connect-btn ${conn.connected ? 'disconnect' : 'connect'}`}
-                        onClick={() => conn.connected ? handleDisconnect(key) : handleConnect(key)}
+                        onClick={() =>
+                          conn.connected ? handleDisconnect(key) : handleConnect(key)
+                        }
                         disabled={isConnecting}
                       >
                         {isConnecting ? 'Working...' : conn.connected ? 'Disconnect' : 'Connect →'}
@@ -157,7 +162,9 @@ export function Options() {
                   )}
                   {conn.connected && (
                     <div className="model-selector">
-                      <label className="model-label" htmlFor={`model-${key}`}>Model</label>
+                      <label className="model-label" htmlFor={`model-${key}`}>
+                        Model
+                      </label>
                       <select
                         id={`model-${key}`}
                         className="model-select"
@@ -165,7 +172,9 @@ export function Options() {
                         onChange={(e) => handleSetModel(key, e.target.value)}
                       >
                         {PROVIDER_MODELS[key].map(({ value, label }) => (
-                          <option key={value} value={value}>{label}</option>
+                          <option key={value} value={value}>
+                            {label}
+                          </option>
                         ))}
                       </select>
                     </div>
@@ -220,21 +229,21 @@ export function Options() {
           <h2>Terms &amp; Disclaimer</h2>
           <div className="disclaimer-body">
             <p>
-              ContextAI is an independent browser extension and is <strong>not affiliated with,
-              endorsed by, or sponsored by</strong> Google, OpenAI, or Anthropic. By using this
-              extension you agree to the following:
+              ContextAI is an independent browser extension and is{' '}
+              <strong>not affiliated with, endorsed by, or sponsored by</strong> Google, OpenAI, or
+              Anthropic. By using this extension you agree to the following:
             </p>
             <ul className="disclaimer-list">
               <li>
-                <strong>Use at your own risk.</strong> This extension is provided &ldquo;as is&rdquo;,
-                without warranty of any kind. The developer is not liable for any damages, data
-                loss, or consequences arising from your use of this extension or any AI-generated
-                content.
+                <strong>Use at your own risk.</strong> This extension is provided &ldquo;as
+                is&rdquo;, without warranty of any kind. The developer is not liable for any
+                damages, data loss, or consequences arising from your use of this extension or any
+                AI-generated content.
               </li>
               <li>
                 <strong>AI responses may be inaccurate.</strong> AI models can produce incorrect,
-                incomplete, or outdated information. Always verify important results with authoritative
-                sources before acting on them.
+                incomplete, or outdated information. Always verify important results with
+                authoritative sources before acting on them.
               </li>
               <li>
                 <strong>Third-party services apply.</strong> Your queries are processed by the AI
@@ -248,8 +257,8 @@ export function Options() {
               </li>
             </ul>
             <p className="disclaimer-trust">
-              We built ContextAI to be transparent and privacy-first. If you ever have questions
-              or concerns, please reach out — your trust matters to us.
+              We built ContextAI to be transparent and privacy-first. If you ever have questions or
+              concerns, please reach out — your trust matters to us.
             </p>
           </div>
         </section>

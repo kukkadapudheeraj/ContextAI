@@ -4,14 +4,7 @@
   "version": "1.0.0",
   "description": "Right-click any text, image, or video and get AI answers using your existing subscriptions.",
   "minimum_chrome_version": "114",
-  "permissions": [
-    "contextMenus",
-    "activeTab",
-    "scripting",
-    "storage",
-    "cookies",
-    "identity"
-  ],
+  "permissions": ["contextMenus", "activeTab", "scripting", "storage", "cookies", "identity"],
   "host_permissions": [
     "https://chat.openai.com/*",
     "https://api.openai.com/*",
@@ -29,11 +22,7 @@
       "matches": ["<all_urls>"],
       "js": ["src/content/index.tsx"],
       "run_at": "document_idle",
-      "exclude_matches": [
-        "chrome://*/*",
-        "chrome-extension://*/*",
-        "about://*/*"
-      ]
+      "exclude_matches": ["chrome://*/*", "chrome-extension://*/*", "about://*/*"]
     }
   ],
   "action": {
@@ -51,8 +40,6 @@
   },
   "oauth2": {
     "client_id": "YOUR_GOOGLE_OAUTH_CLIENT_ID.apps.googleusercontent.com",
-    "scopes": [
-      "https://www.googleapis.com/auth/generativeai"
-    ]
+    "scopes": ["https://www.googleapis.com/auth/generativeai"]
   }
 }

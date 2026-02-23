@@ -60,7 +60,7 @@ export class ClaudeProvider extends BaseProvider {
       throw new Error(`Claude API error (${response.status}): ${errText}`);
     }
 
-    const data = await response.json() as {
+    const data = (await response.json()) as {
       content: Array<{ type: string; text: string }>;
     };
 

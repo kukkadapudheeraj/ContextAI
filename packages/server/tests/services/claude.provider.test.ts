@@ -41,9 +41,9 @@ describe('ClaudeProvider', () => {
   it('throws on API error', async () => {
     mockFetch.mockResolvedValue({ ok: false, status: 400, text: async () => 'Bad request' });
 
-    await expect(
-      provider.chat([{ role: 'user', content: 'Hi' }], 'bad-token')
-    ).rejects.toThrow('Claude API error (400)');
+    await expect(provider.chat([{ role: 'user', content: 'Hi' }], 'bad-token')).rejects.toThrow(
+      'Claude API error (400)'
+    );
   });
 
   it('sends system prompt separately and uses default model', async () => {

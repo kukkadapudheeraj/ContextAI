@@ -16,9 +16,5 @@ vi.mock('../src/logger/logger', () => ({
 // pino-http deep-inspects real pino logger internals at init time.
 // Replace the entire middleware with a no-op passthrough for tests.
 vi.mock('../src/middleware/request-logger.middleware', () => ({
-  requestLoggerMiddleware: (
-    _req: unknown,
-    _res: unknown,
-    next: () => void
-  ) => next(),
+  requestLoggerMiddleware: (_req: unknown, _res: unknown, next: () => void) => next(),
 }));

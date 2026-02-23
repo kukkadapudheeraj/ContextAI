@@ -16,7 +16,7 @@ export async function chatClaude(
   messages: ChatMessage[],
   token: string,
   model = DEFAULT_MODEL,
-  signal?: AbortSignal,
+  signal?: AbortSignal
 ): Promise<string> {
   const systemMsg = messages.find((m) => m.role === 'system');
 
@@ -54,6 +54,6 @@ export async function chatClaude(
     throw new Error(`Claude error (${response.status}): ${text}`);
   }
 
-  const data = await response.json() as { content: Array<{ type: string; text: string }> };
+  const data = (await response.json()) as { content: Array<{ type: string; text: string }> };
   return data.content?.find((b) => b.type === 'text')?.text?.trim() ?? '(No response)';
 }

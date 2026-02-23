@@ -4,10 +4,7 @@ import { crx } from '@crxjs/vite-plugin';
 import manifest from './src/manifest.json';
 
 export default defineConfig(({ mode }) => ({
-  plugins: [
-    react(),
-    crx({ manifest }),
-  ],
+  plugins: [react(), crx({ manifest })],
 
   build: {
     // Use Terser for stronger minification than the default esbuild
@@ -30,7 +27,7 @@ export default defineConfig(({ mode }) => ({
       mangle: {
         // Shorten all local variable and function names to single letters
         toplevel: false, // leave top-level names intact (safer for Chrome APIs)
-        safari10: true,  // broader compatibility
+        safari10: true, // broader compatibility
       },
       format: {
         // Strip every comment from the output bundle

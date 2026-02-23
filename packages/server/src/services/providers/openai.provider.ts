@@ -63,7 +63,7 @@ export class OpenAIProvider extends BaseProvider {
       throw new Error(`OpenAI API error (${response.status}): ${errText}`);
     }
 
-    const data = await response.json() as {
+    const data = (await response.json()) as {
       choices: Array<{ message: { content: string } }>;
     };
 

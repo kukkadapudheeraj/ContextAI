@@ -6,9 +6,10 @@ import { ProviderFactory } from '../../src/services/provider.factory';
 // Only emit log output when the developer explicitly requests it (VERBOSE=true pnpm test).
 // This keeps normal CI / watch-mode output clean and never affects extension users —
 // test files are never bundled into the extension build.
-const log = process.env['VERBOSE'] === 'true'
-  ? (...args: unknown[]) => console.log(...args) // eslint-disable-line no-console
-  : () => undefined;
+const log =
+  process.env['VERBOSE'] === 'true'
+    ? (...args: unknown[]) => console.log(...args) // eslint-disable-line no-console
+    : () => undefined;
 
 // Create a single app instance shared across all tests in this suite
 const app = createApp();
@@ -81,7 +82,11 @@ describe('POST /api/chat', () => {
     vi.spyOn(ProviderFactory, 'getProvider').mockReturnValue(mockProvider as never);
     vi.spyOn(ProviderFactory, 'isValidProvider').mockReturnValue(true);
 
-    const body = { provider: 'gemini', messages: [{ role: 'user', content: 'Hello' }], token: 'valid-token' };
+    const body = {
+      provider: 'gemini',
+      messages: [{ role: 'user', content: 'Hello' }],
+      token: 'valid-token',
+    };
     log('[test] POST /api/chat — valid request:', body);
 
     const res = await request(app).post('/api/chat').send(body);
@@ -104,7 +109,11 @@ describe('POST /api/chat', () => {
     vi.spyOn(ProviderFactory, 'getProvider').mockReturnValue(mockProvider as never);
     vi.spyOn(ProviderFactory, 'isValidProvider').mockReturnValue(true);
 
-    const body = { provider: 'gemini', messages: [{ role: 'user', content: 'Hello' }], token: 'valid-token' };
+    const body = {
+      provider: 'gemini',
+      messages: [{ role: 'user', content: 'Hello' }],
+      token: 'valid-token',
+    };
     log('[test] POST /api/chat — provider will throw:', body);
 
     const res = await request(app).post('/api/chat').send(body);
