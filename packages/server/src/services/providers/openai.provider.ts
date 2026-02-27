@@ -1,4 +1,4 @@
-import type { ChatMessage } from '@contextai/shared';
+import type { ChatMessage } from '@clarify/shared';
 import { BaseProvider, type ChatResult } from './base.provider';
 
 const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';

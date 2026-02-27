@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import type { ChatMessage } from '@contextai/shared';
+import type { ChatMessage } from '@clarify/shared';
 import { ProviderFactory } from '../services/provider.factory';
 
 interface ChatRequestBody {

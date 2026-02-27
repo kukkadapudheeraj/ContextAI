@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "ContextAI",
+  "name": "Clarify",
   "version": "1.0.0",
   "description": "Right-click any text, image, or video and get AI answers using your existing subscriptions.",
   "minimum_chrome_version": "114",
@@ -24,7 +24,7 @@
   ],
   "action": {
     "default_popup": "src/popup/index.html",
-    "default_title": "ContextAI"
+    "default_title": "Clarify"
   },
   "options_ui": {
     "page": "src/options/index.html",

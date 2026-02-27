@@ -1,4 +1,4 @@
-import type { ChatMessage } from '@contextai/shared';
+import type { ChatMessage } from '@clarify/shared';
 
 const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
 export const DEFAULT_MODEL = 'gpt-4o-mini';

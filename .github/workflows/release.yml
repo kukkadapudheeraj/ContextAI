@@ -31,18 +31,18 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build extension
-        run: pnpm --filter @contextai/extension build
+        run: pnpm --filter @clarify/extension build
 
       - name: Package extension as ZIP
         run: |
           cd packages/extension
-          zip -r ContextAI-${{ github.ref_name }}.zip dist/
-          echo "Created ContextAI-${{ github.ref_name }}.zip"
+          zip -r Clarify-${{ github.ref_name }}.zip dist/
+          echo "Created Clarify-${{ github.ref_name }}.zip"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          files: packages/extension/ContextAI-${{ github.ref_name }}.zip
+          files: packages/extension/Clarify-${{ github.ref_name }}.zip
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

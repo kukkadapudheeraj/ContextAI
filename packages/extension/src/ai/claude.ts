@@ -1,4 +1,4 @@
-import type { ChatMessage } from '@contextai/shared';
+import type { ChatMessage } from '@clarify/shared';
 
 const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';
 export const DEFAULT_MODEL = 'claude-3-5-haiku-20241022';

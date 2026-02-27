@@ -1,4 +1,4 @@
-import type { Provider } from '@contextai/shared';
+import type { Provider } from '@clarify/shared';
 import { BaseProvider } from './providers/base.provider';
 import { GeminiProvider } from './providers/gemini.provider';
 import { OpenAIProvider } from './providers/openai.provider';

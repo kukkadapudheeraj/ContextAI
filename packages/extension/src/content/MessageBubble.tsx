@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { ChatMessage, Provider } from '@contextai/shared';
+import type { ChatMessage, Provider } from '@clarify/shared';
 
 const PROVIDER_LABELS: Record<Provider, string> = {
   gemini: 'Gemini',

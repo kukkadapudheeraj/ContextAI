@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import type { Provider, StorageSchema } from '@contextai/shared';
+import type { Provider, StorageSchema } from '@clarify/shared';
 
 const ONBOARDING_STEPS = [
   { icon: '🔑', text: 'Connect an AI provider below using your API key' },
   { icon: '🌐', text: 'Visit any webpage and right-click text, image, or video' },
-  { icon: '💬', text: 'Select "Ask ContextAI" to start chatting' },
+  { icon: '💬', text: 'Select "Ask Clarify" to start chatting' },
 ];
 
 const PROVIDERS: Array<{ key: Provider; label: string; icon: string; subtitle: string }> = [
@@ -112,7 +112,7 @@ export function Popup() {
   return (
     <div className="popup">
       <header className="popup-header">
-        <div className="popup-logo">🤖 ContextAI</div>
+        <div className="popup-logo">✦ Clarify</div>
       </header>
 
       {/* First-run onboarding banner */}

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GeminiProvider } from '../../src/services/providers/gemini.provider';
-import type { ChatMessage } from '@contextai/shared';
+import type { ChatMessage } from '@clarify/shared';
 
 const provider = new GeminiProvider();
 

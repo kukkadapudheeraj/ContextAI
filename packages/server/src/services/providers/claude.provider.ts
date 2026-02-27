@@ -1,4 +1,4 @@
-import type { ChatMessage } from '@contextai/shared';
+import type { ChatMessage } from '@clarify/shared';
 import { BaseProvider, type ChatResult } from './base.provider';
 
 const CLAUDE_API_URL = 'https://api.anthropic.com/v1/messages';

@@ -1,8 +1,8 @@
-# ContextAI
+# Clarify
 
 > Right-click any text, image, or video on any webpage and get instant AI answers — using your **existing** ChatGPT, Claude, or Gemini subscriptions. No API keys required.
 
-![CI](https://github.com/kukkadapudheeraj/ContextAI/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/kukkadapudheeraj/Clarify/actions/workflows/ci.yml/badge.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)
 ![pnpm](https://img.shields.io/badge/pnpm-%3E%3D8-orange)
@@ -13,7 +13,7 @@
 ## How It Works
 
 ```
-  You                  ContextAI Extension                               AI Provider
+  You                  Clarify Extension                               AI Provider
    │                         │                                               │
    │  Right-click text /     │                                               │
    │  image / video ────────►│                                               │
@@ -54,7 +54,7 @@
 
 ```
 ┌─────────────────────────┐
-│ ContextAI      [−] [×]  │  ← header
+│ Clarify      [−] [×]  │  ← header
 ├─────────────────────────┤
 │ 📄 Selected Text        │
 │ "Quantum entanglement    │  ← ContextPreview
@@ -85,7 +85,7 @@
 ## Project Structure
 
 ```
-ContextAI/
+Clarify/
 ├── packages/
 │   ├── shared/          # Shared TypeScript types & utilities
 │   │   └── src/
@@ -150,8 +150,8 @@ ContextAI/
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/your-username/ContextAI.git
-cd ContextAI
+git clone https://github.com/your-username/Clarify.git
+cd Clarify
 pnpm install
 ```
 
@@ -175,7 +175,7 @@ Open `packages/extension/src/manifest.json` and replace the placeholder:
 ### 3. Build and load the extension
 
 ```bash
-pnpm --filter @contextai/extension build
+pnpm --filter @clarify/extension build
 ```
 
 Then load it in Chrome:
@@ -192,11 +192,11 @@ Then load it in Chrome:
 
 ### Connect an AI provider
 
-Click the **ContextAI** icon in your Chrome toolbar to open the popup:
+Click the **Clarify** icon in your Chrome toolbar to open the popup:
 
 ```
 ┌──────────────────────────┐
-│  ContextAI               │
+│  Clarify               │
 │  Active: [ Gemini    ▼ ] │
 │                          │
 │  ● Gemini   [Connected ✓]│
@@ -213,7 +213,7 @@ Click the **ContextAI** icon in your Chrome toolbar to open the popup:
 
 1. **Select any text** on a webpage
 2. **Right-click** the selection
-3. Choose **"Ask ContextAI"**
+3. Choose **"Ask Clarify"**
 4. The chat widget opens at the bottom-right with the text pre-loaded
 
 Use the action pills to change the mode:
@@ -228,13 +228,13 @@ Use the action pills to change the mode:
 ### Ask about an image
 
 1. **Right-click any image** on the page
-2. Choose **"Ask ContextAI about this image"**
+2. Choose **"Ask Clarify about this image"**
 3. The widget opens with a thumbnail preview — AI describes and analyzes it
 
 ### Ask about a video
 
 1. **Right-click a video** or any link
-2. Choose **"Ask ContextAI about this video"**
+2. Choose **"Ask Clarify about this video"**
 3. The widget opens with the URL — AI helps you understand the content
 
 ### Continue the conversation
@@ -255,13 +255,13 @@ Type in the input box at the bottom of the widget and press **Enter** (or **Shif
 ```bash
 pnpm test
 # or individually:
-pnpm --filter @contextai/server test
+pnpm --filter @clarify/server test
 ```
 
 To see detailed request/response logs during tests:
 
 ```bash
-VERBOSE=true pnpm --filter @contextai/server test
+VERBOSE=true pnpm --filter @clarify/server test
 ```
 
 ### Lint and format
@@ -283,7 +283,7 @@ pnpm build
 ### Watch mode (extension)
 
 ```bash
-pnpm --filter @contextai/extension dev
+pnpm --filter @clarify/extension dev
 # Rebuilds on every file save — just reload the extension in chrome://extensions
 ```
 
@@ -365,21 +365,21 @@ Omit `model` to use the provider's free-tier default (`gpt-4o-mini`, `gemini-1.5
 
 ## Deployment
 
-ContextAI is **fully serverless** — the extension calls AI provider APIs directly. There is nothing to host.
+Clarify is **fully serverless** — the extension calls AI provider APIs directly. There is nothing to host.
 
 ### Build for production
 
 1. Update `packages/extension/src/manifest.json` with your real Gemini OAuth client ID
 2. Build:
    ```bash
-   pnpm --filter @contextai/extension build
+   pnpm --filter @clarify/extension build
    ```
 3. Zip the output:
    ```bash
    # macOS / Linux
-   cd packages/extension/dist && zip -r ../contextai-v1.0.0.zip .
+   cd packages/extension/dist && zip -r ../clarify-v1.0.0.zip .
    # Windows (PowerShell)
-   Compress-Archive -Path packages/extension/dist/* -DestinationPath contextai-v1.0.0.zip
+   Compress-Archive -Path packages/extension/dist/* -DestinationPath clarify-v1.0.0.zip
    ```
 4. Submit the ZIP at [chrome.google.com/webstore/devconsole](https://chrome.google.com/webstore/devconsole) (one-time $5 developer fee)
 
@@ -396,7 +396,7 @@ git push origin v1.0.0
 
 The `release.yml` workflow will:
 1. Build the extension
-2. Create `ContextAI-v1.0.0.zip` from `packages/extension/dist/`
+2. Create `Clarify-v1.0.0.zip` from `packages/extension/dist/`
 3. Publish a GitHub Release with the ZIP attached
 
 ---
@@ -410,7 +410,7 @@ The extension already stores session tokens securely (AES-256-GCM encrypted in `
 Injecting a React component directly into a webpage risks CSS collisions. Shadow DOM creates a fully isolated style boundary — the widget looks identical on every site.
 
 **Why pnpm workspaces?**
-Shared types (`ChatMessage`, `ContextType`, `Provider`) live in `@contextai/shared` and are consumed by both the extension and the server with zero duplication. pnpm symlinks make this seamless without publishing to npm.
+Shared types (`ChatMessage`, `ContextType`, `Provider`) live in `@clarify/shared` and are consumed by both the extension and the server with zero duplication. pnpm symlinks make this seamless without publishing to npm.
 
 ---
 

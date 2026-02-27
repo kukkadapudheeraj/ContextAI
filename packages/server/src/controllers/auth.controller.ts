@@ -25,7 +25,7 @@ export async function statusHandler(
   next: NextFunction
 ): Promise<void> {
   try {
-    res.json({ status: 'ok', message: 'ContextAI server is running.' });
+    res.json({ status: 'ok', message: 'Clarify server is running.' });
   } catch (err) {
     next(err);
   }

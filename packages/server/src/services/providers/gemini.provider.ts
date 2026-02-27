@@ -1,4 +1,4 @@
-import type { ChatMessage } from '@contextai/shared';
+import type { ChatMessage } from '@clarify/shared';
 import { BaseProvider, type ChatResult } from './base.provider';
 
 const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com/v1beta';

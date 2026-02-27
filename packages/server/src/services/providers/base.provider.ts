@@ -1,5 +1,5 @@
-import type { ChatMessage, ContextType } from '@contextai/shared';
-import { buildSystemPrompt } from '@contextai/shared';
+import type { ChatMessage, ContextType } from '@clarify/shared';
+import { buildSystemPrompt } from '@clarify/shared';
 
 /** Returned by every provider's chat() method. */
 export interface ChatResult {

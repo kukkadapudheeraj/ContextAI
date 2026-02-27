@@ -1,4 +1,4 @@
-import type { StorageSchema, Provider } from '@contextai/shared';
+import type { StorageSchema, Provider } from '@clarify/shared';
 import { encryptToken, decryptToken } from '../utils/crypto';
 
 const DEFAULTS: StorageSchema = {
@@ -10,7 +10,7 @@ const DEFAULTS: StorageSchema = {
 
 /** Returns the chrome.storage.local key for a provider's encrypted token */
 function tokenKey(provider: Provider): string {
-  return `contextai_token_${provider}`;
+  return `clarify_token_${provider}`;
 }
 
 // ── Sync storage (non-sensitive settings) ────────────────────────────────────

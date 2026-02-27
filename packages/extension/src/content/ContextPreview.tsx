@@ -1,5 +1,5 @@
 import React from 'react';
-import type { ContextType } from '@contextai/shared';
+import type { ContextType } from '@clarify/shared';
 
 function truncate(str: string, maxLength: number): string {
   return str.length <= maxLength ? str : str.slice(0, maxLength) + '...';

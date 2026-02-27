@@ -1,5 +1,5 @@
 {
-  "name": "@contextai/server",
+  "name": "@clarify/server",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -11,7 +11,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@contextai/shared": "workspace:*",
+    "@clarify/shared": "workspace:*",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "express-rate-limit": "^8.2.1",

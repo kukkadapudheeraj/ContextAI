@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import type { Provider, StorageSchema } from '@contextai/shared';
+import type { Provider, StorageSchema } from '@clarify/shared';
 
 const PROVIDER_MODELS: Record<Provider, Array<{ value: string; label: string }>> = {
   gemini: [
@@ -106,7 +106,7 @@ export function Options() {
   return (
     <div className="options-page">
       <header className="options-header">
-        <h1>🤖 ContextAI Settings</h1>
+        <h1>🤖 Clarify Settings</h1>
         <p>Manage your AI connections and preferences</p>
       </header>
 
@@ -218,7 +218,7 @@ export function Options() {
             🔒 Your session tokens are encrypted with <code>AES-256-GCM</code> before being stored
             and never leave your device — kept in <code>chrome.storage.local</code> only, never
             synced to Google. Non-sensitive settings (active provider, selected model) use{' '}
-            <code>chrome.storage.sync</code> for convenience. Nothing is ever sent to ContextAI
+            <code>chrome.storage.sync</code> for convenience. Nothing is ever sent to Clarify
             servers. AI requests go directly from your browser to the AI provider&apos;s servers.
           </p>
         </section>
@@ -228,7 +228,7 @@ export function Options() {
           <h2>Terms &amp; Disclaimer</h2>
           <div className="disclaimer-body">
             <p>
-              ContextAI is an independent browser extension and is{' '}
+              Clarify is an independent browser extension and is{' '}
               <strong>not affiliated with, endorsed by, or sponsored by</strong> Google, OpenAI, or
               Anthropic. By using this extension you agree to the following:
             </p>
@@ -256,7 +256,7 @@ export function Options() {
               </li>
             </ul>
             <p className="disclaimer-trust">
-              We built ContextAI to be transparent and privacy-first. If you ever have questions or
+              We built Clarify to be transparent and privacy-first. If you ever have questions or
               concerns, please reach out — your trust matters to us.
             </p>
           </div>

@@ -4,9 +4,9 @@ import { ChatWidget } from './ChatWidget';
 import styles from './widget.css?inline';
 
 // Prevent double-injection
-if (!document.getElementById('contextai-shadow-host')) {
+if (!document.getElementById('clarify-shadow-host')) {
   const host = document.createElement('div');
-  host.id = 'contextai-shadow-host';
+  host.id = 'clarify-shadow-host';
 
   // Pin to bottom-right via inline style (outside shadow DOM, so it's never overridden)
   host.style.cssText = `

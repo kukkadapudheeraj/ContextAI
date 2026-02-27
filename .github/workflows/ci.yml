@@ -36,10 +36,10 @@ jobs:
         run: pnpm format:check
 
       - name: Test (server)
-        run: pnpm --filter @contextai/server test
+        run: pnpm --filter @clarify/server test
 
       - name: Build (server)
-        run: pnpm --filter @contextai/server build
+        run: pnpm --filter @clarify/server build
 
       - name: Build (extension)
-        run: pnpm --filter @contextai/extension build
+        run: pnpm --filter @clarify/extension build

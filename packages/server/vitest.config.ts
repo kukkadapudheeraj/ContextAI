@@ -9,7 +9,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@contextai/shared': path.resolve(__dirname, '../shared/src/index.ts'),
+      '@clarify/shared': path.resolve(__dirname, '../shared/src/index.ts'),
     },
   },
 });

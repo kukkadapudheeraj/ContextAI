@@ -1,8 +1,8 @@
 {
-  "name": "contextai",
+  "name": "clarify",
   "private": true,
   "version": "1.0.0",
-  "description": "ContextAI monorepo — browser extension + backend server",
+  "description": "Clarify monorepo — browser extension + backend server",
   "scripts": {
     "dev": "pnpm -r dev",
     "build": "pnpm -r build",

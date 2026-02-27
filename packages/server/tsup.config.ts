@@ -7,5 +7,5 @@ export default defineConfig({
   clean: true,
   sourcemap: true,
   // Bundle workspace deps (shared package) since they're source files, not compiled packages
-  noExternal: ['@contextai/shared'],
+  noExternal: ['@clarify/shared'],
 });

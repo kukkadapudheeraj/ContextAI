@@ -13,7 +13,7 @@
  *     (this is inherent to any client-side encryption scheme)
  */
 
-const KEY_RECORD = 'contextai_enc_key';
+const KEY_RECORD = 'clarify_enc_key';
 const ALGORITHM = { name: 'AES-GCM', length: 256 } as const;
 const IV_BYTES = 12; // 96-bit IV — recommended for AES-GCM
 

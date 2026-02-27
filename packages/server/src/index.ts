@@ -5,6 +5,6 @@ import { logger } from './logger/logger';
 const app = createApp();
 
 app.listen(env.PORT, () => {
-  logger.info(`ContextAI server running on http://localhost:${env.PORT}`);
+  logger.info(`Clarify server running on http://localhost:${env.PORT}`);
   logger.info(`Environment: ${env.NODE_ENV}`);
 });

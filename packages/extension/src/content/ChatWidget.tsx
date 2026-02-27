@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import type { Action, ChatMessage, ContextType, Provider } from '@contextai/shared';
+import type { Action, ChatMessage, ContextType, Provider } from '@clarify/shared';
 import { buildInitialUserMessage, buildSystemPrompt } from '../utils/prompt';
 import { ChatPanel } from './ChatPanel';
 
@@ -158,7 +158,7 @@ export function ChatWidget() {
     return (
       <button className="widget-tab" onClick={() => setState((s) => ({ ...s, isOpen: true }))}>
         <span className="widget-tab-icon">✦</span>
-        <span className="widget-tab-label">ContextAI</span>
+        <span className="widget-tab-label">Clarify</span>
       </button>
     );
   }

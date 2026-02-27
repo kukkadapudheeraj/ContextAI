@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import type { Action, ChatMessage, ContextType, Provider } from '@contextai/shared';
+import type { Action, ChatMessage, ContextType, Provider } from '@clarify/shared';
 import { ContextPreview } from './ContextPreview';
 import { MessageBubble, LoadingBubble } from './MessageBubble';
 
@@ -77,7 +77,7 @@ export function ChatPanel({
       <div className="panel-header">
         <div className="panel-header-left">
           <div className="panel-header-icon">✦</div>
-          <span className="panel-title">ContextAI</span>
+          <span className="panel-title">Clarify</span>
           <span className="provider-badge">{PROVIDER_LABELS[provider]}</span>
         </div>
         <div className="panel-header-actions">

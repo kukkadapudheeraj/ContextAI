@@ -1,4 +1,4 @@
-import type { Action, ContextType } from '@contextai/shared';
+import type { Action, ContextType } from '@clarify/shared';
 
 const SYSTEM_PROMPTS: Record<ContextType, string> = {
   text: 'You are a helpful assistant. The user has highlighted text from a webpage. Explain it clearly and concisely. Invite follow-up questions at the end.',

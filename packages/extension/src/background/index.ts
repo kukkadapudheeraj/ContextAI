@@ -1,5 +1,5 @@
-import type { ChatMessage, ContextType, StorageSchema } from '@contextai/shared';
-import type { OpenChatMessage } from '@contextai/shared';
+import type { ChatMessage, ContextType, StorageSchema } from '@clarify/shared';
+import type { OpenChatMessage } from '@clarify/shared';
 import { loadStorage, getProviderToken } from '../storage/storage';
 import { connectGemini, disconnectGemini } from '../providers/gemini';
 import { connectOpenAI, disconnectOpenAI } from '../providers/openai';
@@ -12,20 +12,20 @@ import { chatClaude } from '../ai/claude';
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
-    id: 'contextai_text',
-    title: 'Ask ContextAI',
+    id: 'clarify_text',
+    title: 'Ask Clarify',
     contexts: ['selection'],
   });
 
   chrome.contextMenus.create({
-    id: 'contextai_image',
-    title: 'Ask ContextAI about this image',
+    id: 'clarify_image',
+    title: 'Ask Clarify about this image',
     contexts: ['image'],
   });
 
   chrome.contextMenus.create({
-    id: 'contextai_video',
-    title: 'Ask ContextAI about this video',
+    id: 'clarify_video',
+    title: 'Ask Clarify about this video',
     contexts: ['video', 'link'],
   });
 });
@@ -39,10 +39,10 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   let contextType: ContextType;
   let content: string;
 
-  if (info.menuItemId === 'contextai_text') {
+  if (info.menuItemId === 'clarify_text') {
     contextType = 'text';
     content = info.selectionText ?? '';
-  } else if (info.menuItemId === 'contextai_image') {
+  } else if (info.menuItemId === 'clarify_image') {
     contextType = 'image';
     content = info.srcUrl ?? '';
   } else {

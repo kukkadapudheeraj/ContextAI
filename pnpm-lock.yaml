@@ -32,7 +32,7 @@ importers:
 
   packages/extension:
     dependencies:
-      '@contextai/shared':
+      '@clarify/shared':
         specifier: workspace:*
         version: link:../shared
       react:
@@ -81,7 +81,7 @@ importers:
 
   packages/server:
     dependencies:
-      '@contextai/shared':
+      '@clarify/shared':
         specifier: workspace:*
         version: link:../shared
       cors:

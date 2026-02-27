@@ -12,7 +12,7 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@contextai/shared": ["../shared/src/index.ts"]
+      "@clarify/shared": ["../shared/src/index.ts"]
     }
   },
   "include": ["src", "tests"],
