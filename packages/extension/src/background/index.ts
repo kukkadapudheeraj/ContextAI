@@ -60,12 +60,8 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   try {
     await chrome.tabs.sendMessage(tab.id, message);
   } catch {
-    // Content script may not be injected yet — try scripting API
-    await chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      files: ['src/content/index.tsx'],
-    });
-    await chrome.tabs.sendMessage(tab.id, message);
+    // Content script not yet injected (tab was open before extension loaded).
+    // The manifest injects it automatically on next page load — nothing to do here.
   }
 });
 
@@ -83,7 +79,10 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 async function handleMessage(message: { type: string; payload?: unknown }): Promise<unknown> {
   switch (message.type) {
     case 'CONNECT_PROVIDER':
-      return handleConnect((message.payload as { provider: string }).provider);
+      return handleConnect(
+        (message.payload as { provider: string; apiKey?: string }).provider,
+        (message.payload as { provider: string; apiKey?: string }).apiKey,
+      );
 
     case 'DISCONNECT_PROVIDER':
       return handleDisconnect((message.payload as { provider: string }).provider);
@@ -111,16 +110,22 @@ async function handleMessage(message: { type: string; payload?: unknown }): Prom
 
 // ── Provider Connection ────────────────────────────────────────────────────────
 
-async function handleConnect(provider: string): Promise<{ success: boolean }> {
+async function handleConnect(
+  provider: string,
+  apiKey?: string,
+): Promise<{ success: boolean }> {
   switch (provider) {
     case 'gemini':
-      await connectGemini();
+      if (!apiKey) throw new Error('Gemini API key is required.');
+      await connectGemini(apiKey);
       break;
     case 'openai':
-      await connectOpenAI();
+      if (!apiKey) throw new Error('OpenAI API key is required.');
+      await connectOpenAI(apiKey);
       break;
     case 'claude':
-      await connectClaude();
+      if (!apiKey) throw new Error('Claude API key is required.');
+      await connectClaude(apiKey);
       break;
     default:
       throw new Error(`Unknown provider: ${provider}`);

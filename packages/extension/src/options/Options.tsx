@@ -1,24 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import type { Provider, StorageSchema } from '@contextai/shared';
 
-// Free-tier models are listed first (used by default).
-// Users with paid subscriptions can select higher-tier models below.
 const PROVIDER_MODELS: Record<Provider, Array<{ value: string; label: string }>> = {
   gemini: [
-    { value: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash (default — free)' },
-    { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash (free — newest)' },
-    { value: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro (paid)' },
+    { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash (default)' },
+    { value: 'gemini-2.0-flash-lite', label: 'Gemini 2.0 Flash Lite (faster)' },
+    { value: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro' },
   ],
   openai: [
-    { value: 'gpt-4o-mini', label: 'GPT-4o Mini (default — free)' },
-    { value: 'gpt-4o', label: 'GPT-4o (Plus / Team / Enterprise)' },
-    { value: 'o1-mini', label: 'o1 Mini (Plus — reasoning)' },
+    { value: 'gpt-4o-mini', label: 'GPT-4o Mini (default)' },
+    { value: 'gpt-4o', label: 'GPT-4o' },
+    { value: 'o3-mini', label: 'o3 Mini (reasoning)' },
   ],
   claude: [
-    { value: 'claude-3-5-haiku-20251001', label: 'Claude 3.5 Haiku (default — free)' },
-    { value: 'claude-3-5-sonnet-20241022', label: 'Claude 3.5 Sonnet (Pro)' },
-    { value: 'claude-sonnet-4-6', label: 'Claude Sonnet 4.6 (latest)' },
-    { value: 'claude-opus-4-6', label: 'Claude Opus 4.6 (most powerful)' },
+    { value: 'claude-3-5-haiku-20241022', label: 'Claude 3.5 Haiku (default)' },
+    { value: 'claude-3-5-sonnet-20241022', label: 'Claude 3.5 Sonnet' },
+    { value: 'claude-3-7-sonnet-20250219', label: 'Claude 3.7 Sonnet (latest)' },
   ],
 };
 
@@ -27,19 +24,19 @@ const PROVIDERS: Array<{ key: Provider; label: string; icon: string; description
     key: 'gemini',
     label: 'Google Gemini',
     icon: '✦',
-    description: 'Connects via Google OAuth. Requires a Google account with Gemini access.',
+    description: 'API key from Google AI Studio (aistudio.google.com/apikey).',
   },
   {
     key: 'openai',
     label: 'ChatGPT (OpenAI)',
     icon: '⬡',
-    description: 'Detects your ChatGPT session. Make sure you are logged into chat.openai.com.',
+    description: 'API key from platform.openai.com/api-keys — separate from your ChatGPT subscription.',
   },
   {
     key: 'claude',
     label: 'Claude (Anthropic)',
     icon: '◈',
-    description: 'Detects your Claude session. Make sure you are logged into claude.ai.',
+    description: 'API key from console.anthropic.com/settings/keys — separate from your Claude subscription.',
   },
 ];
 

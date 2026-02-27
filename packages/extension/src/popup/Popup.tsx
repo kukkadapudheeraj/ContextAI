@@ -2,22 +2,42 @@ import React, { useEffect, useState } from 'react';
 import type { Provider, StorageSchema } from '@contextai/shared';
 
 const ONBOARDING_STEPS = [
-  { icon: '🔌', text: 'Connect at least one AI provider below' },
+  { icon: '🔑', text: 'Connect an AI provider below using your API key' },
   { icon: '🌐', text: 'Visit any webpage and right-click text, image, or video' },
   { icon: '💬', text: 'Select "Ask ContextAI" to start chatting' },
 ];
 
-const PROVIDERS: Array<{ key: Provider; label: string; icon: string }> = [
-  { key: 'gemini', label: 'Gemini', icon: '✦' },
-  { key: 'openai', label: 'ChatGPT', icon: '⬡' },
-  { key: 'claude', label: 'Claude', icon: '◈' },
+const PROVIDERS: Array<{ key: Provider; label: string; icon: string; subtitle: string }> = [
+  { key: 'gemini', label: 'Gemini', icon: '✦', subtitle: 'API key · aistudio.google.com' },
+  { key: 'openai', label: 'ChatGPT', icon: '⬡', subtitle: 'API key · platform.openai.com' },
+  { key: 'claude', label: 'Claude', icon: '◈', subtitle: 'API key · console.anthropic.com' },
 ];
+
+const API_KEY_LINKS: Partial<Record<Provider, { placeholder: string; url: string; hint: string }>> = {
+  gemini: {
+    placeholder: 'AIza...',
+    url: 'https://aistudio.google.com/apikey',
+    hint: 'API key from Google AI Studio (aistudio.google.com/apikey)',
+  },
+  openai: {
+    placeholder: 'sk-...',
+    url: 'https://platform.openai.com/api-keys',
+    hint: 'API key from platform.openai.com — separate from your ChatGPT subscription',
+  },
+  claude: {
+    placeholder: 'sk-ant-...',
+    url: 'https://console.anthropic.com/settings/keys',
+    hint: 'API key from console.anthropic.com — separate from your Claude subscription',
+  },
+};
 
 export function Popup() {
   const [storage, setStorage] = useState<StorageSchema | null>(null);
   const [connecting, setConnecting] = useState<Provider | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [onboardingDismissed, setOnboardingDismissed] = useState(false);
+  const [keyInputProvider, setKeyInputProvider] = useState<Provider | null>(null);
+  const [keyInputValue, setKeyInputValue] = useState('');
 
   useEffect(() => {
     loadStorage();
@@ -28,14 +48,29 @@ export function Popup() {
     setStorage(result);
   }
 
-  async function handleConnect(provider: Provider) {
+  function startConnect(provider: Provider) {
+    setKeyInputProvider(provider);
+    setKeyInputValue('');
+    setError(null);
+  }
+
+  async function handleConnect(provider: Provider, apiKey?: string) {
     setConnecting(provider);
     setError(null);
     try {
-      await chrome.runtime.sendMessage({ type: 'CONNECT_PROVIDER', payload: { provider } });
+      const response = await chrome.runtime.sendMessage({
+        type: 'CONNECT_PROVIDER',
+        payload: { provider, apiKey },
+      });
+      if (response?.error) {
+        setError(`Failed to connect: ${response.error}`);
+        return;
+      }
       await loadStorage();
+      setKeyInputProvider(null);
+      setKeyInputValue('');
     } catch (err) {
-      setError(`Failed to connect ${provider}: ${String(err)}`);
+      setError(`Failed to connect: ${String(err)}`);
     } finally {
       setConnecting(null);
     }
@@ -125,23 +160,79 @@ export function Popup() {
       <section className="section">
         <div className="section-label">Connected Accounts</div>
         <div className="provider-list">
-          {PROVIDERS.map(({ key, label, icon }) => {
+          {PROVIDERS.map(({ key, label, icon, subtitle }) => {
             const conn = storage[key];
             const isConnecting = connecting === key;
+            const showingInput = keyInputProvider === key;
+            const keyLink = API_KEY_LINKS[key];
+
             return (
-              <div key={key} className={`provider-card ${conn.connected ? 'connected' : ''}`}>
-                <div className="provider-info">
-                  <span className="provider-icon">{icon}</span>
-                  <span className="provider-name">{label}</span>
-                  {conn.connected && <span className="connected-badge">✓</span>}
+              <div
+                key={key}
+                className={`provider-card ${conn.connected ? 'connected' : ''} ${showingInput ? 'expanded' : ''}`}
+              >
+                <div className="provider-row">
+                  <div className="provider-info">
+                    <span className="provider-icon">{icon}</span>
+                    <div className="provider-name-group">
+                      <span className="provider-name">{label}</span>
+                      <span className="provider-subtitle">{subtitle}</span>
+                    </div>
+                    {conn.connected && <span className="connected-badge">✓</span>}
+                  </div>
+                  {conn.connected ? (
+                    <button
+                      className="action-btn disconnect"
+                      onClick={() => handleDisconnect(key)}
+                      disabled={isConnecting}
+                    >
+                      {isConnecting ? '...' : 'Disconnect'}
+                    </button>
+                  ) : (
+                    <button
+                      className="action-btn connect"
+                      onClick={() => startConnect(key)}
+                      disabled={isConnecting || showingInput}
+                    >
+                      {isConnecting ? '...' : 'Connect →'}
+                    </button>
+                  )}
                 </div>
-                <button
-                  className={`action-btn ${conn.connected ? 'disconnect' : 'connect'}`}
-                  onClick={() => (conn.connected ? handleDisconnect(key) : handleConnect(key))}
-                  disabled={isConnecting}
-                >
-                  {isConnecting ? '...' : conn.connected ? 'Disconnect' : 'Connect →'}
-                </button>
+
+                {/* Inline API key input for OpenAI / Claude */}
+                {showingInput && keyLink && (
+                  <div className="key-input-row">
+                    <p className="key-hint">{keyLink.hint}</p>
+                    <input
+                      className="key-input"
+                      type="password"
+                      placeholder={keyLink.placeholder}
+                      value={keyInputValue}
+                      onChange={(e) => setKeyInputValue(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && keyInputValue.trim()) {
+                          void handleConnect(key, keyInputValue.trim());
+                        }
+                        if (e.key === 'Escape') {
+                          setKeyInputProvider(null);
+                        }
+                      }}
+                      autoFocus
+                    />
+                    <div className="key-input-actions">
+                      <a className="key-link" href={keyLink.url} target="_blank" rel="noreferrer">
+                        Get key ↗
+                      </a>
+                      <button
+                        className="action-btn connect save-btn"
+                        onClick={() => handleConnect(key, keyInputValue.trim())}
+                        disabled={!keyInputValue.trim() || isConnecting}
+                      >
+                        {isConnecting ? '...' : 'Save'}
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })}

@@ -9,10 +9,11 @@ const SYSTEM_PROMPTS: Record<ContextType, string> = {
 };
 
 const TEXT_ACTION_PROMPTS: Record<Action, string> = {
-  explain: 'Explain the following text clearly and briefly, then suggest 3 related questions:',
+  explain: 'Explain the following text clearly and briefly:',
   simplify: 'Rewrite the following in simple terms that a beginner would understand:',
   summarize: 'Summarize the following in 3 concise bullet points:',
   translate: 'Translate the following to plain English and explain any technical terms:',
+  related: 'Generate 5 related searches and questions someone might have about this topic:',
 };
 
 export function buildSystemPrompt(contextType: ContextType, customPrompt?: string): string {

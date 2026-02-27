@@ -8,6 +8,7 @@ const ACTIONS: Array<{ key: Action; label: string }> = [
   { key: 'simplify', label: 'Simplify' },
   { key: 'summarize', label: 'Summarize' },
   { key: 'translate', label: 'Translate' },
+  { key: 'related', label: 'Related' },
 ];
 
 interface ChatPanelProps {
@@ -18,7 +19,6 @@ interface ChatPanelProps {
   isLoading: boolean;
   onSendMessage: (text: string) => void;
   onPillAction: (action: Action) => void;
-  onMinimize: () => void;
   onClose: () => void;
 }
 
@@ -30,14 +30,12 @@ export function ChatPanel({
   isLoading,
   onSendMessage,
   onPillAction,
-  onMinimize,
   onClose,
 }: ChatPanelProps) {
   const [inputText, setInputText] = useState('');
+  const [copied, setCopied] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  // Auto-scroll to latest message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
@@ -56,7 +54,15 @@ export function ChatPanel({
     }
   }
 
-  // Visible conversation messages (exclude system prompt)
+  function handleCopyAll() {
+    const lastAI = [...messages].reverse().find((m) => m.role === 'assistant');
+    if (!lastAI) return;
+    navigator.clipboard.writeText(lastAI.content).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    });
+  }
+
   const visibleMessages = messages.filter((m) => m.role !== 'system');
 
   const PROVIDER_LABELS: Record<Provider, string> = {
@@ -70,15 +76,17 @@ export function ChatPanel({
       {/* Header */}
       <div className="panel-header">
         <div className="panel-header-left">
-          <span className="panel-header-icon">🤖</span>
+          <div className="panel-header-icon">✦</div>
           <span className="panel-title">ContextAI</span>
           <span className="provider-badge">{PROVIDER_LABELS[provider]}</span>
         </div>
         <div className="panel-header-actions">
-          <button className="icon-btn" onClick={onMinimize} title="Minimize">
-            −
-          </button>
-          <button className="icon-btn" onClick={onClose} title="Close">
+          {visibleMessages.some((m) => m.role === 'assistant') && (
+            <button className="copy-all-btn" onClick={handleCopyAll}>
+              {copied ? '✓ Copied' : 'Copy'}
+            </button>
+          )}
+          <button className="icon-btn" onClick={onClose} title="Minimize">
             ×
           </button>
         </div>
@@ -88,7 +96,7 @@ export function ChatPanel({
       {contextContent && <ContextPreview contextType={contextType} content={contextContent} />}
 
       {/* Action Pills (text mode only) */}
-      {contextType === 'text' && visibleMessages.length === 0 && (
+      {contextType === 'text' && (
         <div className="action-pills">
           {ACTIONS.map(({ key, label }) => (
             <button
@@ -107,7 +115,7 @@ export function ChatPanel({
       <div className="messages-area">
         {visibleMessages.length === 0 && !isLoading ? (
           <div className="empty-state">
-            <div className="empty-state-icon">💬</div>
+            <div className="empty-state-icon">✦</div>
             <div>Ask anything about the selected content</div>
           </div>
         ) : (
@@ -126,7 +134,6 @@ export function ChatPanel({
       {/* Input */}
       <div className="input-area">
         <textarea
-          ref={inputRef}
           className="chat-input"
           placeholder="Ask a follow-up question..."
           value={inputText}

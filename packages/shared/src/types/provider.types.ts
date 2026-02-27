@@ -2,7 +2,7 @@ export type Provider = 'gemini' | 'openai' | 'claude';
 
 export type ContextType = 'text' | 'image' | 'video';
 
-export type Action = 'explain' | 'simplify' | 'summarize' | 'translate';
+export type Action = 'explain' | 'simplify' | 'summarize' | 'translate' | 'related';
 
 export type MessageRole = 'user' | 'assistant' | 'system';
 
@@ -22,9 +22,9 @@ export interface ChatMessage {
 
 export interface ProviderConnection {
   connected: boolean;
-  /** OAuth access token (Gemini) or API key (OpenAI/Claude) */
+  /** API key — stored encrypted in chrome.storage.local, never in sync storage */
   token?: string;
-  /** Unix timestamp (ms) when the token expires — Gemini OAuth only */
+  /** Reserved: was used for Gemini OAuth expiry, no longer set */
   expiresAt?: number;
   /** User-selected model override — falls back to provider default when undefined */
   model?: string;

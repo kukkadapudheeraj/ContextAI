@@ -1,7 +1,7 @@
 import type { ChatMessage } from '@contextai/shared';
 
 const GEMINI_API_BASE = 'https://generativelanguage.googleapis.com/v1beta';
-export const DEFAULT_MODEL = 'gemini-1.5-flash';
+export const DEFAULT_MODEL = 'gemini-2.0-flash';
 
 interface GeminiPart {
   text?: string;
@@ -32,9 +32,9 @@ export async function chatGemini(
       return { role: m.role === 'assistant' ? 'model' : 'user', parts };
     });
 
-  const response = await fetch(`${GEMINI_API_BASE}/models/${model}:generateContent`, {
+  const response = await fetch(`${GEMINI_API_BASE}/models/${model}:generateContent?key=${token}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    headers: { 'Content-Type': 'application/json' },
     signal,
     body: JSON.stringify({
       system_instruction: systemMsg ? { parts: [{ text: systemMsg.content }] } : undefined,

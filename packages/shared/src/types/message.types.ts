@@ -18,7 +18,7 @@ export interface SendChatRequest {
     /** Full conversation history — server is stateless, client owns the state */
     messages: ChatMessage[];
     provider: Provider;
-    token: string;
+    /** Token is NOT sent here — background fetches it from encrypted local storage */
   };
 }
 

@@ -26,8 +26,19 @@ export function ChatWidget() {
 
   /** Send messages to background → AI provider and get response */
   const triggerQuery = useCallback(
-    async (currentMessages: ChatMessage[], userText: string, provider: Provider) => {
-      const userMessage: ChatMessage = { role: 'user', content: userText };
+    async (
+      currentMessages: ChatMessage[],
+      userText: string,
+      provider: Provider,
+      mediaUrl?: string,
+      msgContextType?: ContextType
+    ) => {
+      const userMessage: ChatMessage = {
+        role: 'user',
+        content: userText,
+        ...(mediaUrl && { mediaUrl }),
+        ...(msgContextType && { contextType: msgContextType }),
+      };
       const updatedMessages = [...currentMessages, userMessage];
 
       setState((s) => ({
@@ -78,7 +89,6 @@ export function ChatWidget() {
           provider: Provider;
         };
 
-        // Build initial conversation with system prompt
         const systemMessage: ChatMessage = {
           role: 'system',
           content: buildSystemPrompt(contextType),
@@ -93,7 +103,6 @@ export function ChatWidget() {
           isLoading: false,
         });
 
-        // Automatically trigger initial explanation for text selections
         if (contextType === 'text') {
           triggerQuery(
             [systemMessage],
@@ -101,8 +110,14 @@ export function ChatWidget() {
             provider
           );
         } else {
-          // For images/videos, auto-send the initial analysis request
-          triggerQuery([systemMessage], buildInitialUserMessage(contextType, content), provider);
+          // Pass mediaUrl for images so AI providers use vision API paths
+          triggerQuery(
+            [systemMessage],
+            buildInitialUserMessage(contextType, content),
+            provider,
+            contextType === 'image' ? content : undefined,
+            contextType
+          );
         }
       }
     }
@@ -128,7 +143,6 @@ export function ChatWidget() {
 
   function handlePillAction(action: Action) {
     const userText = buildInitialUserMessage(state.contextType, state.contextContent, action);
-    // Replace conversation with a fresh query for this action
     const freshMessages: ChatMessage[] = [
       { role: 'system', content: buildSystemPrompt(state.contextType) },
     ];
@@ -139,12 +153,11 @@ export function ChatWidget() {
   // ── Render ──────────────────────────────────────────────────────────────────
 
   if (!state.isOpen) {
-    // Collapsed tab — always visible when there's history
     if (state.messages.length <= 1) return null;
 
     return (
       <button className="widget-tab" onClick={() => setState((s) => ({ ...s, isOpen: true }))}>
-        <span className="widget-tab-icon">🤖</span>
+        <span className="widget-tab-icon">✦</span>
         <span className="widget-tab-label">ContextAI</span>
       </button>
     );
@@ -159,8 +172,7 @@ export function ChatWidget() {
       isLoading={state.isLoading}
       onSendMessage={handleSendMessage}
       onPillAction={handlePillAction}
-      onMinimize={() => setState((s) => ({ ...s, isOpen: false }))}
-      onClose={() => setState(INITIAL_STATE)}
+      onClose={() => setState((s) => ({ ...s, isOpen: false }))}
     />
   );
 }
