@@ -30,13 +30,15 @@ const PROVIDERS: Array<{ key: Provider; label: string; icon: string; description
     key: 'openai',
     label: 'ChatGPT (OpenAI)',
     icon: '⬡',
-    description: 'API key from platform.openai.com/api-keys — separate from your ChatGPT subscription.',
+    description:
+      'API key from platform.openai.com/api-keys — separate from your ChatGPT subscription.',
   },
   {
     key: 'claude',
     label: 'Claude (Anthropic)',
     icon: '◈',
-    description: 'API key from console.anthropic.com/settings/keys — separate from your Claude subscription.',
+    description:
+      'API key from console.anthropic.com/settings/keys — separate from your Claude subscription.',
   },
 ];
 

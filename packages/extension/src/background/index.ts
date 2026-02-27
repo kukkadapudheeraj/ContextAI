@@ -81,7 +81,7 @@ async function handleMessage(message: { type: string; payload?: unknown }): Prom
     case 'CONNECT_PROVIDER':
       return handleConnect(
         (message.payload as { provider: string; apiKey?: string }).provider,
-        (message.payload as { provider: string; apiKey?: string }).apiKey,
+        (message.payload as { provider: string; apiKey?: string }).apiKey
       );
 
     case 'DISCONNECT_PROVIDER':
@@ -110,10 +110,7 @@ async function handleMessage(message: { type: string; payload?: unknown }): Prom
 
 // ── Provider Connection ────────────────────────────────────────────────────────
 
-async function handleConnect(
-  provider: string,
-  apiKey?: string,
-): Promise<{ success: boolean }> {
+async function handleConnect(provider: string, apiKey?: string): Promise<{ success: boolean }> {
   switch (provider) {
     case 'gemini':
       if (!apiKey) throw new Error('Gemini API key is required.');

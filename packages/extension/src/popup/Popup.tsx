@@ -13,23 +13,24 @@ const PROVIDERS: Array<{ key: Provider; label: string; icon: string; subtitle: s
   { key: 'claude', label: 'Claude', icon: '◈', subtitle: 'API key · console.anthropic.com' },
 ];
 
-const API_KEY_LINKS: Partial<Record<Provider, { placeholder: string; url: string; hint: string }>> = {
-  gemini: {
-    placeholder: 'AIza...',
-    url: 'https://aistudio.google.com/apikey',
-    hint: 'API key from Google AI Studio (aistudio.google.com/apikey)',
-  },
-  openai: {
-    placeholder: 'sk-...',
-    url: 'https://platform.openai.com/api-keys',
-    hint: 'API key from platform.openai.com — separate from your ChatGPT subscription',
-  },
-  claude: {
-    placeholder: 'sk-ant-...',
-    url: 'https://console.anthropic.com/settings/keys',
-    hint: 'API key from console.anthropic.com — separate from your Claude subscription',
-  },
-};
+const API_KEY_LINKS: Partial<Record<Provider, { placeholder: string; url: string; hint: string }>> =
+  {
+    gemini: {
+      placeholder: 'AIza...',
+      url: 'https://aistudio.google.com/apikey',
+      hint: 'API key from Google AI Studio (aistudio.google.com/apikey)',
+    },
+    openai: {
+      placeholder: 'sk-...',
+      url: 'https://platform.openai.com/api-keys',
+      hint: 'API key from platform.openai.com — separate from your ChatGPT subscription',
+    },
+    claude: {
+      placeholder: 'sk-ant-...',
+      url: 'https://console.anthropic.com/settings/keys',
+      hint: 'API key from console.anthropic.com — separate from your Claude subscription',
+    },
+  };
 
 export function Popup() {
   const [storage, setStorage] = useState<StorageSchema | null>(null);

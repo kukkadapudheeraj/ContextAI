@@ -26,12 +26,37 @@ function renderInline(text: string): React.ReactNode {
 
 /** Render a single line of markdown */
 function renderLine(line: string, key: number): React.ReactNode {
-  if (line.startsWith('### ')) return <div key={key} className="md-h3">{line.slice(4)}</div>;
-  if (line.startsWith('## '))  return <div key={key} className="md-h2">{line.slice(3)}</div>;
-  if (line.startsWith('# '))   return <div key={key} className="md-h1">{line.slice(2)}</div>;
-  if (/^[-*] /.test(line))     return <div key={key} className="md-list-item">{renderInline(line.slice(2))}</div>;
-  if (/^\d+\. /.test(line))    return <div key={key} className="md-numbered">{renderInline(line)}</div>;
-  if (line.trim() === '')      return <div key={key} className="md-spacer" />;
+  if (line.startsWith('### '))
+    return (
+      <div key={key} className="md-h3">
+        {line.slice(4)}
+      </div>
+    );
+  if (line.startsWith('## '))
+    return (
+      <div key={key} className="md-h2">
+        {line.slice(3)}
+      </div>
+    );
+  if (line.startsWith('# '))
+    return (
+      <div key={key} className="md-h1">
+        {line.slice(2)}
+      </div>
+    );
+  if (/^[-*] /.test(line))
+    return (
+      <div key={key} className="md-list-item">
+        {renderInline(line.slice(2))}
+      </div>
+    );
+  if (/^\d+\. /.test(line))
+    return (
+      <div key={key} className="md-numbered">
+        {renderInline(line)}
+      </div>
+    );
+  if (line.trim() === '') return <div key={key} className="md-spacer" />;
   return <div key={key}>{renderInline(line)}</div>;
 }
 
