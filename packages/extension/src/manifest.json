@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Right-click any text, image, or video and get AI answers using your existing subscriptions.",
   "minimum_chrome_version": "114",
-  "permissions": ["contextMenus", "activeTab", "scripting", "storage"],
+  "permissions": ["contextMenus", "activeTab", "storage"],
   "host_permissions": [
     "https://api.openai.com/*",
     "https://api.anthropic.com/*",
