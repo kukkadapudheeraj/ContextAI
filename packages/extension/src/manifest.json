@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Clarify",
-  "version": "1.0.0",
+  "version": "1.0.7",
   "description": "Right-click any text, image, or video and get AI answers using your existing subscriptions.",
   "minimum_chrome_version": "114",
   "permissions": ["contextMenus", "activeTab", "storage"],
