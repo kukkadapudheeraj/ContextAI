@@ -10,7 +10,12 @@ import { chatClaude } from '../ai/claude';
 
 // ── Context Menu Setup ────────────────────────────────────────────────────────
 
-chrome.runtime.onInstalled.addListener(() => {
+chrome.runtime.onInstalled.addListener((details) => {
+  // Open onboarding page on fresh install
+  if (details.reason === 'install') {
+    void chrome.tabs.create({ url: chrome.runtime.getURL('src/onboarding/index.html') });
+  }
+
   chrome.contextMenus.create({
     id: 'clarify_text',
     title: 'Ask Clarify',
@@ -145,6 +150,22 @@ async function handleDisconnect(provider: string): Promise<{ success: boolean }>
   return { success: true };
 }
 
+// ── Billing Error Detection ────────────────────────────────────────────────────
+
+function detectBillingError(msg: string, provider: string): string | null {
+  const lower = msg.toLowerCase();
+  if (provider === 'openai' && (lower.includes('insufficient_quota') || lower.includes('exceeded your current quota'))) {
+    return "You've run out of OpenAI credits. Add credits at platform.openai.com/settings/billing to continue.";
+  }
+  if (provider === 'claude' && (lower.includes('credit balance') || lower.includes('402'))) {
+    return "You've run out of Claude credits. Add credits at console.anthropic.com/settings/billing to continue.";
+  }
+  if (provider === 'gemini' && lower.includes('resource_exhausted')) {
+    return "You've hit your Gemini quota limit. Add billing at aistudio.google.com/apikey or wait for it to reset.";
+  }
+  return null;
+}
+
 // ── AI Chat Request (calls AI APIs directly — no backend server needed) ────────
 
 async function handleChat(payload: {
@@ -205,6 +226,9 @@ async function handleChat(payload: {
     if (err instanceof DOMException && err.name === 'AbortError') {
       return { error: 'Request timed out after 30 seconds. Check your connection and try again.' };
     }
-    return { error: String(err) };
+    const msg = String(err);
+    const billingError = detectBillingError(msg, providerKey);
+    if (billingError) return { error: billingError };
+    return { error: msg };
   }
 }
